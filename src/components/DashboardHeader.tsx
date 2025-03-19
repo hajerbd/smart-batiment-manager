@@ -13,10 +13,9 @@ import { useIsMobile } from '@/hooks/use-mobile';
 
 interface DashboardHeaderProps {
   title: string;
-  subtitle?: string;
 }
 
-const DashboardHeader: React.FC<DashboardHeaderProps> = ({ title, subtitle }) => {
+const DashboardHeader: React.FC<DashboardHeaderProps> = ({ title }) => {
   const [theme, setTheme] = React.useState<'light' | 'dark'>('light');
   const isMobile = useIsMobile();
 
@@ -29,10 +28,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ title, subtitle }) =>
   return (
     <header className="sticky top-0 z-10 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border px-4 py-3">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-semibold">{title}</h1>
-          {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
-        </div>
+        <h1 className="text-xl font-semibold">{title}</h1>
         
         <div className="flex items-center space-x-2">
           {!isMobile && (

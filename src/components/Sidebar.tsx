@@ -14,11 +14,7 @@ import {
   Building2,
   BarChart3,
   User,
-  Menu,
-  CloudSun,
-  Home,
-  Wrench,
-  LogOut
+  Menu
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -29,10 +25,6 @@ interface SidebarLinkProps {
   label: string;
   collapsed: boolean;
   active: boolean;
-}
-
-interface SidebarProps {
-  onLogout?: () => void;
 }
 
 const SidebarLink = ({ to, icon, label, collapsed, active }: SidebarLinkProps) => (
@@ -51,7 +43,7 @@ const SidebarLink = ({ to, icon, label, collapsed, active }: SidebarLinkProps) =
   </Link>
 );
 
-const Sidebar = ({ onLogout }: SidebarProps) => {
+const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
   const isMobile = useIsMobile();
@@ -62,24 +54,17 @@ const Sidebar = ({ onLogout }: SidebarProps) => {
 
   const links = [
     { to: '/', icon: <LayoutDashboard size={20} />, label: 'Tableau de bord' },
-    { to: '/rooms', icon: <Home size={20} />, label: 'Pièces' },
     { to: '/energy', icon: <Zap size={20} />, label: 'Énergie' },
     { to: '/devices', icon: <Lightbulb size={20} />, label: 'Équipements' },
-    { to: '/weather', icon: <CloudSun size={20} />, label: 'Météo' },
-    { to: '/maintenance', icon: <Wrench size={20} />, label: 'Maintenance' },
     { to: '/alerts', icon: <Bell size={20} />, label: 'Alertes' },
+    { to: '/analytics', icon: <BarChart3 size={20} />, label: 'Analyses' },
+    { to: '/buildings', icon: <Building2 size={20} />, label: 'Bâtiments' },
   ];
   
   const bottomLinks = [
     { to: '/settings', icon: <Settings size={20} />, label: 'Paramètres' },
     { to: '/profile', icon: <User size={20} />, label: 'Profil' },
   ];
-
-  const handleLogout = () => {
-    if (onLogout) {
-      onLogout();
-    }
-  };
 
   // Mobile sidebar
   if (isMobile) {
@@ -107,7 +92,7 @@ const Sidebar = ({ onLogout }: SidebarProps) => {
         )}>
           <div className="px-4 py-6">
             <div className="flex items-center justify-between mb-6">
-              <h1 className="text-xl font-bold text-sidebar-foreground">VitaSmart</h1>
+              <h1 className="text-xl font-bold text-sidebar-foreground">Smart Building</h1>
               <Button variant="ghost" size="icon" onClick={toggleMobile}>
                 <ChevronLeft size={18} />
               </Button>
@@ -137,14 +122,6 @@ const Sidebar = ({ onLogout }: SidebarProps) => {
                     active={location.pathname === link.to}
                   />
                 ))}
-                <Button 
-                  variant="ghost" 
-                  className="w-full justify-start gap-2 mb-1 text-red-500"
-                  onClick={handleLogout}
-                >
-                  <LogOut size={20} />
-                  <span>Déconnexion</span>
-                </Button>
               </div>
             </nav>
           </div>
@@ -161,7 +138,7 @@ const Sidebar = ({ onLogout }: SidebarProps) => {
     )}>
       <div className="px-4 py-6 h-full flex flex-col">
         <div className="flex items-center justify-between mb-6">
-          {!collapsed && <h1 className="text-xl font-bold text-sidebar-foreground">VitaSmart</h1>}
+          {!collapsed && <h1 className="text-xl font-bold text-sidebar-foreground">Smart Building</h1>}
           <Button 
             variant="ghost" 
             size="icon" 
@@ -198,17 +175,6 @@ const Sidebar = ({ onLogout }: SidebarProps) => {
                 active={location.pathname === link.to}
               />
             ))}
-            <Button 
-              variant="ghost" 
-              className={cn(
-                "w-full justify-start gap-2 mb-1 text-red-500",
-                collapsed ? "px-2" : "px-4"
-              )}
-              onClick={handleLogout}
-            >
-              <LogOut size={20} />
-              {!collapsed && <span>Déconnexion</span>}
-            </Button>
           </div>
         </nav>
       </div>
