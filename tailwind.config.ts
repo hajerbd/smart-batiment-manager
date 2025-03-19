@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,27 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Smart building specific colors
+				'energy': {
+					DEFAULT: '#1E88E5', // blue for energy
+					light: '#64B5F6',
+					dark: '#0D47A1',
+				},
+				'hvac': {
+					DEFAULT: '#43A047', // green for HVAC
+					light: '#81C784',
+					dark: '#1B5E20',
+				},
+				'alert': {
+					DEFAULT: '#E53935', // red for alerts
+					light: '#EF5350',
+					dark: '#B71C1C',
+				},
+				'security': {
+					DEFAULT: '#5E35B1', // purple for security
+					light: '#9575CD',
+					dark: '#311B92',
 				}
 			},
 			borderRadius: {
@@ -84,11 +106,16 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'pulse-slow': {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0.6' },
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'pulse-slow': 'pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
 			}
 		}
 	},
