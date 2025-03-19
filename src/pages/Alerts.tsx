@@ -1,4 +1,3 @@
-
 import React from 'react';
 import DashboardHeader from '@/components/DashboardHeader';
 import AlertsPanel from '@/components/AlertsPanel';
@@ -26,11 +25,11 @@ interface Alert {
 const mockAlerts: Alert[] = [
   {
     id: '1',
-    title: 'Température élevée dans la salle serveur',
+    title: 'Température élevée dans la chambre n°1',
     description: 'La température a atteint 28°C, dépassant le seuil critique de 27°C.',
     type: 'critical',
     status: 'in-progress',
-    source: 'Système HVAC',
+    source: 'Système de climatisation',
     createdAt: '2023-06-12T08:30:00',
   },
   {
@@ -44,18 +43,18 @@ const mockAlerts: Alert[] = [
   },
   {
     id: '3',
-    title: 'Détection de mouvement après les heures de travail',
-    description: 'Mouvement détecté au 2ème étage, couloir principal, caméra #12.',
+    title: 'Vannes de chauffage bloquées',
+    description: 'Les vannes de chauffage dans la chambre n°2 semblent bloquées.',
     type: 'warning',
     status: 'resolved',
-    source: 'Système de sécurité',
+    source: 'Système de chauffage',
     createdAt: '2023-06-11T22:45:00',
     resolvedAt: '2023-06-12T00:20:00',
   },
   {
     id: '4',
     title: 'Fuite d\'eau détectée',
-    description: 'Fuite détectée dans les toilettes du 1er étage.',
+    description: 'Fuite détectée dans la vanne d\'irrigation du jardin.',
     type: 'critical',
     status: 'resolved',
     source: 'Capteurs d\'eau',
@@ -64,11 +63,11 @@ const mockAlerts: Alert[] = [
   },
   {
     id: '5',
-    title: 'Batterie faible sur capteur de porte',
-    description: 'La batterie du capteur de la porte principale est à 15%.',
+    title: 'Vannes d\'irrigation obstruées',
+    description: 'Les vannes d\'irrigation du jardin sont partiellement obstruées.',
     type: 'warning',
     status: 'new',
-    source: 'Système IoT',
+    source: 'Système d\'irrigation',
     createdAt: '2023-06-12T07:10:00',
   },
   {
@@ -82,8 +81,8 @@ const mockAlerts: Alert[] = [
   },
   {
     id: '7',
-    title: 'Mise à jour logicielle disponible',
-    description: 'Une nouvelle version du firmware est disponible pour les capteurs IoT.',
+    title: 'Stores automatiques bloqués',
+    description: 'Les stores automatiques de la chambre n°1 ne répondent plus aux commandes.',
     type: 'info',
     status: 'new',
     source: 'Système de gestion',
@@ -137,7 +136,6 @@ const AlertsPage = () => {
     return matchesSearch && matchesStatus && matchesType;
   });
   
-  // Count alerts by type for statistics
   const criticalCount = mockAlerts.filter(a => a.type === 'critical').length;
   const warningCount = mockAlerts.filter(a => a.type === 'warning').length;
   const infoCount = mockAlerts.filter(a => a.type === 'info').length;
@@ -148,7 +146,6 @@ const AlertsPage = () => {
     <div className="min-h-screen flex flex-col">
       <DashboardHeader title="Alertes et notifications" />
       <div className="flex-1 p-4 space-y-6">
-        {/* Alert statistics */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card className="bg-red-50 dark:bg-red-950/30 border-red-100 dark:border-red-800">
             <CardContent className="p-6 flex justify-between items-center">
@@ -314,7 +311,7 @@ const AlertsPage = () => {
                           </span>
                           <span>{Math.round((criticalCount / total) * 100)}%</span>
                         </div>
-                        <Progress value={(criticalCount / total) * 100} className="h-2" indicatorClassName="bg-red-500" />
+                        <Progress value={(criticalCount / total) * 100} className="h-2" />
                       </div>
                       
                       <div>
@@ -325,7 +322,7 @@ const AlertsPage = () => {
                           </span>
                           <span>{Math.round((warningCount / total) * 100)}%</span>
                         </div>
-                        <Progress value={(warningCount / total) * 100} className="h-2" indicatorClassName="bg-yellow-500" />
+                        <Progress value={(warningCount / total) * 100} className="h-2" />
                       </div>
                       
                       <div>
@@ -336,7 +333,7 @@ const AlertsPage = () => {
                           </span>
                           <span>{Math.round((infoCount / total) * 100)}%</span>
                         </div>
-                        <Progress value={(infoCount / total) * 100} className="h-2" indicatorClassName="bg-blue-500" />
+                        <Progress value={(infoCount / total) * 100} className="h-2" />
                       </div>
                     </div>
                   </div>
@@ -354,7 +351,7 @@ const AlertsPage = () => {
                           </span>
                           <span>{Math.round((mockAlerts.filter(a => a.status === 'new').length / total) * 100)}%</span>
                         </div>
-                        <Progress value={(mockAlerts.filter(a => a.status === 'new').length / total) * 100} className="h-2" indicatorClassName="bg-blue-500" />
+                        <Progress value={(mockAlerts.filter(a => a.status === 'new').length / total) * 100} className="h-2" />
                       </div>
                       
                       <div>
@@ -365,7 +362,7 @@ const AlertsPage = () => {
                           </span>
                           <span>{Math.round((mockAlerts.filter(a => a.status === 'in-progress').length / total) * 100)}%</span>
                         </div>
-                        <Progress value={(mockAlerts.filter(a => a.status === 'in-progress').length / total) * 100} className="h-2" indicatorClassName="bg-yellow-500" />
+                        <Progress value={(mockAlerts.filter(a => a.status === 'in-progress').length / total) * 100} className="h-2" />
                       </div>
                       
                       <div>
@@ -376,7 +373,7 @@ const AlertsPage = () => {
                           </span>
                           <span>{Math.round((resolvedCount / total) * 100)}%</span>
                         </div>
-                        <Progress value={(resolvedCount / total) * 100} className="h-2" indicatorClassName="bg-green-500" />
+                        <Progress value={(resolvedCount / total) * 100} className="h-2" />
                       </div>
                     </div>
                   </div>
@@ -408,3 +405,4 @@ const AlertsPage = () => {
 };
 
 export default AlertsPage;
+

@@ -7,12 +7,12 @@ import AlertsPanel from '@/components/AlertsPanel';
 import RoomControl from '@/components/RoomControl';
 import WeatherWidget from '@/components/WeatherWidget';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { CircleCheck, Building, Users, Zap } from 'lucide-react';
+import { CircleCheck, Home, Thermometer, Zap } from 'lucide-react';
 
 const Dashboard = () => {
   return (
     <div className="min-h-screen flex flex-col">
-      <DashboardHeader title="Tableau de bord" />
+      <DashboardHeader title="Tableau de bord VitaSmart" />
       <div className="flex-1 p-4 space-y-6">
         {/* Stats overview */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -22,7 +22,7 @@ const Dashboard = () => {
                 <CircleCheck className="h-6 w-6 text-green-600 dark:text-green-400" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Systèmes opérationnels</p>
+                <p className="text-sm text-muted-foreground">Systèmes actifs</p>
                 <h3 className="text-2xl font-bold">95%</h3>
               </div>
             </CardContent>
@@ -31,11 +31,11 @@ const Dashboard = () => {
           <Card>
             <CardContent className="p-6 flex items-center space-x-4">
               <div className="p-2 bg-blue-100 rounded-full dark:bg-blue-900">
-                <Building className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                <Home className="h-6 w-6 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Surface totale</p>
-                <h3 className="text-2xl font-bold">150 m²</h3>
+                <p className="text-sm text-muted-foreground">Pièces gérées</p>
+                <h3 className="text-2xl font-bold">5</h3>
               </div>
             </CardContent>
           </Card>
@@ -43,11 +43,11 @@ const Dashboard = () => {
           <Card>
             <CardContent className="p-6 flex items-center space-x-4">
               <div className="p-2 bg-purple-100 rounded-full dark:bg-purple-900">
-                <Users className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                <Thermometer className="h-6 w-6 text-purple-600 dark:text-purple-400" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Occupation</p>
-                <h3 className="text-2xl font-bold">72%</h3>
+                <p className="text-sm text-muted-foreground">Temp. moyenne</p>
+                <h3 className="text-2xl font-bold">22°C</h3>
               </div>
             </CardContent>
           </Card>
@@ -58,7 +58,7 @@ const Dashboard = () => {
                 <Zap className="h-6 w-6 text-amber-600 dark:text-amber-400" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Consommation moy.</p>
+                <p className="text-sm text-muted-foreground">Consommation</p>
                 <h3 className="text-2xl font-bold">285 kWh</h3>
               </div>
             </CardContent>

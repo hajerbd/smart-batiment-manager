@@ -1,7 +1,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Thermometer, Fan, Droplets, Wifi } from 'lucide-react';
+import { Thermometer, Fan, Droplets, Lamp, Home } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const SystemStatusItem = ({ icon, name, status, value, description, theme }: {
@@ -10,7 +10,7 @@ const SystemStatusItem = ({ icon, name, status, value, description, theme }: {
   status: 'online' | 'offline' | 'warning';
   value: string;
   description: string;
-  theme: 'energy' | 'hvac' | 'security';
+  theme: 'energy' | 'climate' | 'water';
 }) => {
   const getStatusColor = () => {
     switch (status) {
@@ -24,8 +24,8 @@ const SystemStatusItem = ({ icon, name, status, value, description, theme }: {
   const getThemeColor = () => {
     switch (theme) {
       case 'energy': return 'text-energy';
-      case 'hvac': return 'text-hvac';
-      case 'security': return 'text-security';
+      case 'climate': return 'text-blue-500';
+      case 'water': return 'text-cyan-500';
       default: return 'text-foreground';
     }
   };
@@ -34,8 +34,8 @@ const SystemStatusItem = ({ icon, name, status, value, description, theme }: {
     <div className="flex items-start space-x-4 p-4 rounded-md bg-background border">
       <div className={cn("p-2 rounded-full", 
         theme === 'energy' ? 'bg-energy/10 text-energy' : 
-        theme === 'hvac' ? 'bg-hvac/10 text-hvac' : 
-        'bg-security/10 text-security')}>
+        theme === 'climate' ? 'bg-blue-100 text-blue-500' : 
+        'bg-cyan-100 text-cyan-500')}>
         {icon}
       </div>
       <div className="flex-1 space-y-1">
@@ -63,38 +63,38 @@ const SystemsOverview = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <SystemStatusItem 
             icon={<Thermometer size={20} />}
-            name="HVAC - Zone Bureau"
+            name="Système de chauffage"
             status="online"
             value="22.5°C"
             description="Température optimale maintenue"
-            theme="hvac"
+            theme="climate"
           />
           
           <SystemStatusItem 
             icon={<Fan size={20} />}
-            name="Ventilation"
+            name="Système de climatisation"
             status="online"
             value="80%"
             description="Circulation d'air efficace"
-            theme="hvac"
+            theme="climate"
           />
           
           <SystemStatusItem 
-            icon={<Wifi size={20} />}
-            name="Réseau IoT"
+            icon={<Home size={20} />}
+            name="Stores automatiques"
             status="warning"
-            value="42 appareils"
-            description="Quelques appareils en reconnexion"
-            theme="security"
+            value="4/6 opérationnels"
+            description="Maintenance requise dans la chambre n°1"
+            theme="energy"
           />
           
           <SystemStatusItem 
             icon={<Droplets size={20} />}
-            name="Système d'eau"
+            name="Système d'irrigation"
             status="online"
             value="3.2 m³/h"
             description="Consommation normale"
-            theme="energy"
+            theme="water"
           />
         </div>
         
