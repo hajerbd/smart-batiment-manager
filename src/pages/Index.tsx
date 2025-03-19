@@ -4,14 +4,14 @@ import DashboardHeader from '@/components/DashboardHeader';
 import EnergyConsumptionChart from '@/components/EnergyConsumptionChart';
 import SystemsOverview from '@/components/SystemsOverview';
 import AlertsPanel from '@/components/AlertsPanel';
-import DeviceControl from '@/components/DeviceControl';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import HouseVisualization from '@/components/HouseVisualization';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CircleCheck, Building, Users, Zap } from 'lucide-react';
 
 const Dashboard = () => {
   return (
     <div className="min-h-screen flex flex-col">
-      <DashboardHeader title="Tableau de bord" />
+      <DashboardHeader title="VitaSmart" subtitle="Tableau de bord" />
       <div className="flex-1 p-4 space-y-6">
         {/* Stats overview */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -34,7 +34,7 @@ const Dashboard = () => {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Surface totale</p>
-                <h3 className="text-2xl font-bold">12,540 m²</h3>
+                <h3 className="text-2xl font-bold">180 m²</h3>
               </div>
             </CardContent>
           </Card>
@@ -46,7 +46,7 @@ const Dashboard = () => {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Occupation</p>
-                <h3 className="text-2xl font-bold">72%</h3>
+                <h3 className="text-2xl font-bold">3 pers.</h3>
               </div>
             </CardContent>
           </Card>
@@ -64,6 +64,9 @@ const Dashboard = () => {
           </Card>
         </div>
         
+        {/* House visualization */}
+        <HouseVisualization />
+        
         {/* Main dashboard content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
@@ -74,9 +77,6 @@ const Dashboard = () => {
             <AlertsPanel />
           </div>
         </div>
-        
-        {/* Device control section */}
-        <DeviceControl />
       </div>
     </div>
   );
