@@ -8,8 +8,8 @@ import {
   Bell, 
   Info, 
   Thermometer,
-  Camera,
-  Lock,
+  Droplet,
+  Snowflake,
   Activity,
   Clock
 } from 'lucide-react';
@@ -30,51 +30,51 @@ const mockAlerts: AlertItem[] = [
   {
     id: '1',
     type: 'critical',
-    title: 'Température élevée',
-    description: 'La température dans la salle serveur a dépassé le seuil critique (28°C)',
+    title: 'Vanne de chauffage bloquée',
+    description: 'La vanne de chauffage dans la Chambre n°1 ne répond plus aux commandes',
     time: 'Il y a 10 min',
-    system: 'HVAC',
+    system: 'Chauffage',
     icon: <Thermometer className="h-5 w-5" />,
     read: false
   },
   {
     id: '2',
     type: 'warning',
-    title: 'Mouvement détecté',
-    description: 'Mouvement détecté dans la zone sécurisée pendant les heures non-ouvrables',
+    title: 'Vanne d\'eau entartée',
+    description: 'La vanne d\'irrigation du jardin présente des signes d\'entartrage',
     time: 'Il y a 25 min',
-    system: 'Sécurité',
-    icon: <Camera className="h-5 w-5" />,
+    system: 'Irrigation',
+    icon: <Droplet className="h-5 w-5" />,
     read: true
   },
   {
     id: '3',
     type: 'info',
     title: 'Maintenance planifiée',
-    description: 'Maintenance du système électrique prévue demain à 18h00',
+    description: 'Maintenance du système de chauffage prévue demain à 18h00',
     time: 'Il y a 1h',
-    system: 'Électricité',
+    system: 'Chauffage',
     icon: <Info className="h-5 w-5" />,
     read: false
   },
   {
     id: '4',
     type: 'warning',
-    title: 'Porte déverrouillée',
-    description: 'La porte principale est restée déverrouillée pendant plus de 5 minutes',
+    title: 'Débit d\'eau faible',
+    description: 'Le débit d\'eau dans le système d\'irrigation est inférieur à la normale',
     time: 'Il y a 1h 30min',
-    system: 'Contrôle d\'accès',
-    icon: <Lock className="h-5 w-5" />,
+    system: 'Irrigation',
+    icon: <Droplet className="h-5 w-5" />,
     read: true
   },
   {
     id: '5',
     type: 'info',
-    title: 'Consommation d\'énergie réduite',
-    description: 'La consommation d\'énergie a diminué de 15% par rapport à la semaine dernière',
+    title: 'Vanne de climatisation',
+    description: 'La vanne de climatisation du salon a été remplacée avec succès',
     time: 'Il y a 2h',
-    system: 'Énergie',
-    icon: <Activity className="h-5 w-5" />,
+    system: 'Climatisation',
+    icon: <Snowflake className="h-5 w-5" />,
     read: true
   }
 ];
@@ -106,7 +106,7 @@ const AlertsPanel = () => {
         <div className="flex items-center justify-between">
           <div>
             <CardTitle>Alertes et notifications</CardTitle>
-            <CardDescription>Surveillez les problèmes et maintenances</CardDescription>
+            <CardDescription>Surveillez l'état des vannes et maintenances</CardDescription>
           </div>
           <Badge variant="destructive" className="rounded-full">
             {unreadCount} non lues

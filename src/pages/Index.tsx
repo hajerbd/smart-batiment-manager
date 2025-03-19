@@ -4,7 +4,8 @@ import DashboardHeader from '@/components/DashboardHeader';
 import EnergyConsumptionChart from '@/components/EnergyConsumptionChart';
 import SystemsOverview from '@/components/SystemsOverview';
 import AlertsPanel from '@/components/AlertsPanel';
-import DeviceControl from '@/components/DeviceControl';
+import RoomControl from '@/components/RoomControl';
+import WeatherWidget from '@/components/WeatherWidget';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { CircleCheck, Building, Users, Zap } from 'lucide-react';
 
@@ -34,7 +35,7 @@ const Dashboard = () => {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Surface totale</p>
-                <h3 className="text-2xl font-bold">12,540 m²</h3>
+                <h3 className="text-2xl font-bold">150 m²</h3>
               </div>
             </CardContent>
           </Card>
@@ -63,6 +64,9 @@ const Dashboard = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Weather widget */}
+        <WeatherWidget />
         
         {/* Main dashboard content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -75,8 +79,8 @@ const Dashboard = () => {
           </div>
         </div>
         
-        {/* Device control section */}
-        <DeviceControl />
+        {/* Room control section */}
+        <RoomControl />
       </div>
     </div>
   );
