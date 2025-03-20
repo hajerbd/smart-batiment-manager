@@ -1,13 +1,12 @@
 
 import React from 'react';
 import DashboardHeader from '@/components/DashboardHeader';
-import EnergyConsumptionChart from '@/components/EnergyConsumptionChart';
 import SystemsOverview from '@/components/SystemsOverview';
 import AlertsPanel from '@/components/AlertsPanel';
 import RoomControl from '@/components/RoomControl';
 import WeatherWidget from '@/components/WeatherWidget';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { CircleCheck, Home, Thermometer, Zap } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { CircleCheck, Home, Thermometer } from 'lucide-react';
 
 const Dashboard = () => {
   return (
@@ -15,7 +14,7 @@ const Dashboard = () => {
       <DashboardHeader title="Tableau de bord VitaSmart" />
       <div className="flex-1 p-4 space-y-6">
         {/* Stats overview */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card>
             <CardContent className="p-6 flex items-center space-x-4">
               <div className="p-2 bg-green-100 rounded-full dark:bg-green-900">
@@ -51,18 +50,6 @@ const Dashboard = () => {
               </div>
             </CardContent>
           </Card>
-          
-          <Card>
-            <CardContent className="p-6 flex items-center space-x-4">
-              <div className="p-2 bg-amber-100 rounded-full dark:bg-amber-900">
-                <Zap className="h-6 w-6 text-amber-600 dark:text-amber-400" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Consommation</p>
-                <h3 className="text-2xl font-bold">285 kWh</h3>
-              </div>
-            </CardContent>
-          </Card>
         </div>
 
         {/* Weather widget */}
@@ -71,7 +58,6 @@ const Dashboard = () => {
         {/* Main dashboard content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
-            <EnergyConsumptionChart />
             <SystemsOverview />
           </div>
           <div className="space-y-6">
