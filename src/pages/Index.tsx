@@ -1,7 +1,6 @@
 
 import React from 'react';
 import DashboardHeader from '@/components/DashboardHeader';
-import SystemsOverview from '@/components/SystemsOverview';
 import AlertsPanel from '@/components/AlertsPanel';
 import RoomControl from '@/components/RoomControl';
 import WeatherWidget from '@/components/WeatherWidget';
@@ -57,9 +56,6 @@ const Dashboard = () => {
         
         {/* Main dashboard content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 space-y-6">
-            <SystemsOverview />
-          </div>
           <div className="space-y-6">
             <AlertsPanel />
           </div>
