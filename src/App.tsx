@@ -10,6 +10,7 @@ import Devices from "./pages/Devices";
 import Alerts from "./pages/Alerts";
 import NotFound from "./pages/NotFound";
 import Sidebar from "./components/Sidebar";
+import Profile from "./pages/Profile";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ const App = () => (
               <Route path="/energy" element={<Energy />} />
               <Route path="/devices" element={<Devices />} />
               <Route path="/alerts" element={<Alerts />} />
+              <Route path="/profile" element={<Profile />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
