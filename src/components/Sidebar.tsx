@@ -6,13 +6,10 @@ import { Separator } from '@/components/ui/separator';
 import {
   LayoutDashboard,
   Lightbulb,
-  Bell,
   Zap,
   Settings,
   ChevronLeft,
   ChevronRight,
-  Building2,
-  BarChart3,
   User,
   Menu
 } from 'lucide-react';
@@ -52,13 +49,11 @@ const Sidebar = () => {
   const toggleCollapse = () => setCollapsed(prev => !prev);
   const toggleMobile = () => setMobileOpen(prev => !prev);
 
+  // Modified links array - removed Alerts, Analytics, and Buildings
   const links = [
     { to: '/', icon: <LayoutDashboard size={20} />, label: 'Tableau de bord' },
     { to: '/energy', icon: <Zap size={20} />, label: 'Énergie' },
     { to: '/devices', icon: <Lightbulb size={20} />, label: 'Équipements' },
-    { to: '/alerts', icon: <Bell size={20} />, label: 'Alertes' },
-    { to: '/analytics', icon: <BarChart3 size={20} />, label: 'Analyses' },
-    { to: '/buildings', icon: <Building2 size={20} />, label: 'Bâtiments' },
   ];
   
   const bottomLinks = [
