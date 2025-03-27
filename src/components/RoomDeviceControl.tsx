@@ -16,7 +16,7 @@ import {
   ArrowLeft,
   Timer
 } from 'lucide-react';
-import { Toggle, ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

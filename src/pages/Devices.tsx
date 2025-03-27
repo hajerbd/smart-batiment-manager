@@ -1,7 +1,6 @@
 
 import React from 'react';
 import DashboardHeader from '@/components/DashboardHeader';
-import RoomControl from '@/components/RoomControl';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -20,7 +19,22 @@ const DevicesPage = () => {
           </div>
           
           <TabsContent value="control">
-            <RoomControl />
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-center rounded-md border border-dashed p-8 h-[300px]">
+                  <div className="text-center">
+                    <p className="text-muted-foreground">Le contrôle des pièces est maintenant disponible via le plan interactif de la maison sur la page d'accueil.</p>
+                    <Button 
+                      variant="outline" 
+                      className="mt-4"
+                      onClick={() => window.location.href = '/'}
+                    >
+                      Aller au tableau de bord
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
           
           <TabsContent value="map">
