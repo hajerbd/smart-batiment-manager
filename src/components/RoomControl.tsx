@@ -20,13 +20,7 @@ import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-interface Room {
-  id: string;
-  name: string;
-  icon: React.ReactNode;
-  devices: Device[];
-}
-
+// Types
 interface Device {
   id: string;
   name: string;
@@ -37,6 +31,14 @@ interface Device {
   temperature?: string;
 }
 
+interface Room {
+  id: string;
+  name: string;
+  icon: React.ReactNode;
+  devices: Device[];
+}
+
+// Données simulées
 const mockRooms: Room[] = [
   {
     id: '1',
@@ -173,6 +175,7 @@ const RoomControl = () => {
   const [rooms, setRooms] = useState<Room[]>(mockRooms);
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
   
+  // Fonction pour basculer l'état d'un appareil
   const toggleDevice = (roomId: string, deviceId: string) => {
     setRooms(rooms.map(room => 
       room.id === roomId ? {
@@ -190,6 +193,7 @@ const RoomControl = () => {
     ));
   };
 
+  // Fonction pour ajuster la valeur d'un appareil (chauffage/clim uniquement)
   const adjustDeviceValue = (roomId: string, deviceId: string, newValue: number) => {
     setRooms(rooms.map(room => 
       room.id === roomId ? {
@@ -205,33 +209,10 @@ const RoomControl = () => {
     ));
   };
 
+  // Fonction pour afficher les contrôles spécifiques à chaque type d'appareil
   const getDeviceControlUI = (room: Room, device: Device) => {
     switch (device.type) {
       case 'heating':
-        return (
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-sm">Température</span>
-              <span className="text-sm font-medium">{device.value}°C</span>
-            </div>
-            <Slider
-              value={[device.value || 0]}
-              min={15}
-              max={30}
-              step={1}
-              disabled={!device.status}
-              onValueChange={(value) => adjustDeviceValue(room.id, device.id, value[0])}
-            />
-            <div className="mt-2">
-              <Label className="text-sm">Température actuelle</Label>
-              <Input 
-                value={device.temperature || '--'} 
-                readOnly 
-                className="mt-1 bg-muted"
-              />
-            </div>
-          </div>
-        );
       case 'cooling':
         return (
           <div className="space-y-3">
@@ -241,8 +222,8 @@ const RoomControl = () => {
             </div>
             <Slider
               value={[device.value || 0]}
-              min={16}
-              max={28}
+              min={device.type === 'heating' ? 15 : 16}
+              max={device.type === 'heating' ? 30 : 28}
               step={1}
               disabled={!device.status}
               onValueChange={(value) => adjustDeviceValue(room.id, device.id, value[0])}
@@ -258,32 +239,17 @@ const RoomControl = () => {
           </div>
         );
       case 'blinds':
-        return (
-          <div className="flex items-center justify-between mt-2">
-            <span className="text-sm font-medium">
-              {device.status ? 'Ouverts' : 'Fermés'}
-            </span>
-            <div className="text-primary">
-              {device.status ? <ToggleRight className="h-6 w-6" /> : <ToggleLeft className="h-6 w-6" />}
-            </div>
-          </div>
-        );
       case 'irrigation':
-        return (
-          <div className="flex items-center justify-between mt-2">
-            <span className="text-sm font-medium">
-              {device.status ? 'En marche' : 'Arrêté'}
-            </span>
-            <div className="text-primary">
-              {device.status ? <ToggleRight className="h-6 w-6" /> : <ToggleLeft className="h-6 w-6" />}
-            </div>
-          </div>
-        );
       case 'lighting':
         return (
           <div className="flex items-center justify-between mt-2">
             <span className="text-sm font-medium">
-              {device.status ? 'Allumée' : 'Éteinte'}
+              {device.status 
+                ? (device.type === 'blinds' ? 'Ouverts' : 
+                   device.type === 'irrigation' ? 'En marche' : 'Allumée')
+                : (device.type === 'blinds' ? 'Fermés' : 
+                   device.type === 'irrigation' ? 'Arrêté' : 'Éteinte')
+              }
             </span>
             <div className="text-primary">
               {device.status ? <ToggleRight className="h-6 w-6" /> : <ToggleLeft className="h-6 w-6" />}
@@ -295,6 +261,7 @@ const RoomControl = () => {
     }
   };
 
+  // Affichage de la page de détail d'une pièce
   if (selectedRoom) {
     return (
       <Card className="w-full">
@@ -352,6 +319,7 @@ const RoomControl = () => {
     );
   }
 
+  // Affichage de la liste des pièces
   return (
     <Card className="w-full">
       <CardHeader>

@@ -2,19 +2,15 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { 
-  AlertTriangle, 
-  Bell, 
-  Info, 
-  Thermometer,
-  Droplet,
+  Thermometer, 
+  Droplet, 
   Snowflake,
-  Activity,
   Clock
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+// Types
 interface AlertItem {
   id: string;
   type: 'warning' | 'critical' | 'info';
@@ -26,6 +22,7 @@ interface AlertItem {
   read: boolean;
 }
 
+// Données simulées
 const mockAlerts: AlertItem[] = [
   {
     id: '1',
@@ -54,7 +51,7 @@ const mockAlerts: AlertItem[] = [
     description: 'Maintenance du système de chauffage prévue demain à 18h00',
     time: 'Il y a 1h',
     system: 'Chauffage',
-    icon: <Info className="h-5 w-5" />,
+    icon: <Thermometer className="h-5 w-5" />,
     read: false
   },
   {
@@ -79,6 +76,7 @@ const mockAlerts: AlertItem[] = [
   }
 ];
 
+// Fonctions utilitaires pour les styles des alertes
 const getAlertColor = (type: AlertItem['type']) => {
   switch (type) {
     case 'critical': return 'border-red-500 bg-red-50 dark:bg-red-950/30';

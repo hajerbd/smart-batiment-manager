@@ -8,7 +8,7 @@ interface WeatherWidgetProps {
 }
 
 const WeatherWidget: React.FC<WeatherWidgetProps> = ({ location = "Extérieur" }) => {
-  // This would be replaced with actual weather data in a real implementation
+  // Données météo simulées (à remplacer par des données réelles)
   const weatherData = {
     temperature: 24,
     condition: 'partly-cloudy',
@@ -16,18 +16,14 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ location = "Extérieur" }
     feelsLike: 26,
   };
 
+  // Fonction pour obtenir l'icône correspondant à la condition météo
   const getWeatherIcon = (condition: string) => {
     switch (condition) {
-      case 'clear':
-        return <Sun className="h-12 w-12 text-amber-500" />;
-      case 'cloudy':
-        return <Cloud className="h-12 w-12 text-gray-500" />;
-      case 'partly-cloudy':
-        return <CloudSun className="h-12 w-12 text-amber-500" />;
-      case 'rainy':
-        return <CloudRain className="h-12 w-12 text-blue-500" />;
-      default:
-        return <Sun className="h-12 w-12 text-amber-500" />;
+      case 'clear': return <Sun className="h-12 w-12 text-amber-500" />;
+      case 'cloudy': return <Cloud className="h-12 w-12 text-gray-500" />;
+      case 'partly-cloudy': return <CloudSun className="h-12 w-12 text-amber-500" />;
+      case 'rainy': return <CloudRain className="h-12 w-12 text-blue-500" />;
+      default: return <Sun className="h-12 w-12 text-amber-500" />;
     }
   };
 

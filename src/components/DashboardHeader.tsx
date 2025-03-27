@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Bell, Search, Sun, Moon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,7 +16,7 @@ interface DashboardHeaderProps {
 }
 
 const DashboardHeader: React.FC<DashboardHeaderProps> = ({ title }) => {
-  const [theme, setTheme] = React.useState<'light' | 'dark'>('light');
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const isMobile = useIsMobile();
 
   const toggleTheme = () => {
