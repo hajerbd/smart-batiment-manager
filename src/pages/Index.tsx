@@ -54,7 +54,7 @@ const Dashboard = () => {
         {/* Weather widget */}
         <WeatherWidget />
         
-        {/* Main dashboard content */}
+        {/* Main dashboard content - inverser la position des panneaux comme demandé */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="space-y-6">
             <RoomControl />

@@ -8,12 +8,11 @@ interface WeatherWidgetProps {
 }
 
 const WeatherWidget: React.FC<WeatherWidgetProps> = ({ location = "Extérieur" }) => {
-  // Données météo simulées (à remplacer par des données réelles)
+  // Données météo simplifiées
   const weatherData = {
     temperature: 24,
     condition: 'partly-cloudy',
     humidity: 65,
-    feelsLike: 26,
   };
 
   // Fonction pour obtenir l'icône correspondant à la condition météo
@@ -38,7 +37,6 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ location = "Extérieur" }
             {getWeatherIcon(weatherData.condition)}
             <div className="ml-4">
               <div className="text-3xl font-bold">{weatherData.temperature}°C</div>
-              <div className="text-sm text-muted-foreground">Ressenti: {weatherData.feelsLike}°C</div>
             </div>
           </div>
           <div className="text-right">
