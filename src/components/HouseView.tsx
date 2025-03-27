@@ -22,37 +22,38 @@ interface Room {
   position: { top: string; left: string; width: string; height: string };
 }
 
-// Liste des pièces avec leur position dans la vue 2D
+// Liste des pièces avec leur position dans la vue 2D - Mise à jour des positions
 const rooms: Room[] = [
   {
     id: '1',
     name: 'Chambre n°1',
     type: 'bedroom',
-    position: { top: '10%', left: '10%', width: '35%', height: '35%' },
+    position: { top: '10%', left: '10%', width: '30%', height: '35%' },
   },
   {
     id: '2',
     name: 'Chambre n°2',
     type: 'bedroom',
-    position: { top: '10%', left: '55%', width: '35%', height: '35%' },
+    position: { top: '10%', left: '60%', width: '30%', height: '35%' },
   },
   {
     id: '3',
     name: 'Salon',
     type: 'livingroom',
-    position: { top: '55%', left: '10%', width: '35%', height: '35%' },
+    position: { top: '55%', left: '10%', width: '30%', height: '35%' },
   },
   {
     id: '4',
     name: 'Couloir',
     type: 'hallway',
-    position: { top: '55%', left: '55%', width: '20%', height: '35%' },
+    // Repositionnement du couloir au centre de la maison
+    position: { top: '35%', left: '42.5%', width: '15%', height: '30%' },
   },
   {
     id: '5',
     name: 'Jardin',
     type: 'garden',
-    position: { top: '55%', left: '80%', width: '10%', height: '35%' },
+    position: { top: '55%', left: '60%', width: '30%', height: '35%' },
   },
 ];
 
@@ -114,12 +115,12 @@ const HouseView: React.FC<HouseViewProps> = ({ onSelectRoom }) => {
         </div>
       </CardHeader>
       <CardContent>
-        <div className="relative border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-900/50 h-[500px] mb-4">
-          {/* Plan 2D de la maison */}
+        {/* Plan 2D de la maison avec bordures plus claires et espacement réduit */}
+        <div className="relative border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-900/50 h-[500px] mb-4 overflow-hidden">
           {rooms.map((room) => (
             <div
               key={room.id}
-              className="absolute border-2 border-gray-400 rounded-lg bg-white dark:bg-gray-800 cursor-pointer hover:bg-primary/5 transition-colors flex flex-col items-center justify-center p-2"
+              className="absolute border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 cursor-pointer hover:bg-primary/5 transition-colors flex flex-col items-center justify-center p-2 shadow-sm"
               style={{
                 top: room.position.top,
                 left: room.position.left,
