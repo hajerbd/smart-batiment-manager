@@ -1,13 +1,16 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import DashboardHeader from '@/components/DashboardHeader';
 import AlertsPanel from '@/components/AlertsPanel';
-import RoomControl from '@/components/RoomControl';
+import HouseView from '@/components/HouseView';
+import RoomDeviceControl from '@/components/RoomDeviceControl';
 import WeatherWidget from '@/components/WeatherWidget';
 import { Card, CardContent } from '@/components/ui/card';
 import { CircleCheck, Home, Thermometer } from 'lucide-react';
 
 const Dashboard = () => {
+  const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
+
   return (
     <div className="min-h-screen flex flex-col">
       <DashboardHeader title="Tableau de bord VitaSmart" />
@@ -54,10 +57,17 @@ const Dashboard = () => {
         {/* Weather widget */}
         <WeatherWidget />
         
-        {/* Main dashboard content - inverser la position des panneaux comme demandé */}
+        {/* Main dashboard content - Plan de maison et contrôle des pièces */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="space-y-6">
-            <RoomControl />
+            {selectedRoomId ? (
+              <RoomDeviceControl 
+                roomId={selectedRoomId} 
+                onBack={() => setSelectedRoomId(null)} 
+              />
+            ) : (
+              <HouseView onSelectRoom={setSelectedRoomId} />
+            )}
           </div>
           <div className="space-y-6">
             <AlertsPanel />
