@@ -10,7 +10,9 @@ import {
   Droplet,
   Lamp,
   ChevronRight,
-  Home
+  Home,
+  ToggleLeft,
+  ToggleRight
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -176,7 +178,13 @@ const RoomControl = () => {
       room.id === roomId ? {
         ...room,
         devices: room.devices.map(device =>
-          device.id === deviceId ? { ...device, status: !device.status, value: device.status ? 0 : device.value || 0 } : device
+          device.id === deviceId ? { 
+            ...device, 
+            status: !device.status, 
+            value: device.type === 'heating' || device.type === 'cooling' 
+              ? (device.status ? 0 : device.value || 0)
+              : device.value
+          } : device
         )
       } : room
     ));
@@ -187,7 +195,11 @@ const RoomControl = () => {
       room.id === roomId ? {
         ...room,
         devices: room.devices.map(device =>
-          device.id === deviceId ? { ...device, value: newValue, status: newValue > 0 } : device
+          device.id === deviceId ? { 
+            ...device, 
+            value: newValue, 
+            status: newValue > 0 
+          } : device
         )
       } : room
     ));
@@ -247,53 +259,35 @@ const RoomControl = () => {
         );
       case 'blinds':
         return (
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-sm">Ouverture</span>
-              <span className="text-sm font-medium">{device.value}%</span>
+          <div className="flex items-center justify-between mt-2">
+            <span className="text-sm font-medium">
+              {device.status ? 'Ouverts' : 'Fermés'}
+            </span>
+            <div className="text-primary">
+              {device.status ? <ToggleRight className="h-6 w-6" /> : <ToggleLeft className="h-6 w-6" />}
             </div>
-            <Slider
-              value={[device.value || 0]}
-              min={0}
-              max={100}
-              step={5}
-              disabled={!device.status}
-              onValueChange={(value) => adjustDeviceValue(room.id, device.id, value[0])}
-            />
           </div>
         );
       case 'irrigation':
         return (
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-sm">Débit</span>
-              <span className="text-sm font-medium">{device.value}%</span>
+          <div className="flex items-center justify-between mt-2">
+            <span className="text-sm font-medium">
+              {device.status ? 'En marche' : 'Arrêté'}
+            </span>
+            <div className="text-primary">
+              {device.status ? <ToggleRight className="h-6 w-6" /> : <ToggleLeft className="h-6 w-6" />}
             </div>
-            <Slider
-              value={[device.value || 0]}
-              min={0}
-              max={100}
-              step={5}
-              disabled={!device.status}
-              onValueChange={(value) => adjustDeviceValue(room.id, device.id, value[0])}
-            />
           </div>
         );
       case 'lighting':
         return (
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-sm">Intensité</span>
-              <span className="text-sm font-medium">{device.value}%</span>
+          <div className="flex items-center justify-between mt-2">
+            <span className="text-sm font-medium">
+              {device.status ? 'Allumée' : 'Éteinte'}
+            </span>
+            <div className="text-primary">
+              {device.status ? <ToggleRight className="h-6 w-6" /> : <ToggleLeft className="h-6 w-6" />}
             </div>
-            <Slider
-              value={[device.value || 0]}
-              min={0}
-              max={100}
-              step={1}
-              disabled={!device.status}
-              onValueChange={(value) => adjustDeviceValue(room.id, device.id, value[0])}
-            />
           </div>
         );
       default:

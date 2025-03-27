@@ -54,13 +54,13 @@ const Dashboard = () => {
         {/* Weather widget */}
         <WeatherWidget />
         
-        {/* Main dashboard content - balanced 2-column layout */}
+        {/* Main dashboard content - balanced 2-column layout with reversed positions */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="space-y-6">
-            <AlertsPanel />
+            <RoomControl />
           </div>
           <div className="space-y-6">
-            <RoomControl />
+            <AlertsPanel />
           </div>
         </div>
       </div>
