@@ -14,7 +14,8 @@ import {
   Home,
   ChevronRight,
   ArrowLeft,
-  Timer
+  Timer,
+  Calendar
 } from 'lucide-react';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Badge } from '@/components/ui/badge';
@@ -30,6 +31,13 @@ import {
   DialogTrigger,
   DialogClose
 } from '@/components/ui/dialog';
+import { Calendar as CalendarComponent } from '@/components/ui/calendar';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { format } from 'date-fns';
 
 // Types
 interface Device {
@@ -39,6 +47,11 @@ interface Device {
   status: boolean;
   icon: React.ReactNode;
   temperature?: string;
+  scheduledTime?: {
+    startTime: string;
+    endTime: string;
+    date?: Date;
+  }
 }
 
 interface Room {
@@ -178,6 +191,7 @@ interface RoomDeviceControlProps {
 const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack }) => {
   const [rooms, setRooms] = useState<Room[]>(mockRooms);
   const [controlMode, setControlMode] = useState<'manual' | 'auto'>('manual');
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   
   // Trouver la chambre sélectionnée
   const selectedRoom = rooms.find(room => room.id === roomId);
@@ -204,6 +218,25 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
           device.id === deviceId ? { 
             ...device, 
             status: !device.status
+          } : device
+        )
+      } : room
+    ));
+  };
+
+  // Fonction pour programmer un appareil
+  const scheduleDevice = (deviceId: string, startTime: string, endTime: string, date?: Date) => {
+    setRooms(rooms.map(room => 
+      room.id === selectedRoom.id ? {
+        ...room,
+        devices: room.devices.map(device =>
+          device.id === deviceId ? { 
+            ...device, 
+            scheduledTime: {
+              startTime,
+              endTime,
+              date
+            }
           } : device
         )
       } : room
@@ -257,10 +290,18 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
                     )}
                   </div>
                 </div>
-                <Switch
-                  checked={device.status}
-                  onCheckedChange={() => toggleDevice(device.id)}
-                />
+                {controlMode === 'manual' ? (
+                  <Switch
+                    checked={device.status}
+                    onCheckedChange={() => toggleDevice(device.id)}
+                  />
+                ) : (
+                  device.status && (
+                    <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-400">
+                      <Timer className="h-3 w-3 mr-1" /> Programmé
+                    </Badge>
+                  )
+                )}
               </div>
               
               {device.status && (
@@ -270,79 +311,89 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
                       <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400">
                         <Zap className="h-3 w-3 mr-1" /> Actif
                       </Badge>
-                      
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button variant="outline" size="sm" className="flex items-center">
-                            <Clock className="h-3 w-3 mr-1" /> Programmer
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle>Programmation - {device.name}</DialogTitle>
-                            <DialogDescription>
-                              Définissez les heures de fonctionnement
-                            </DialogDescription>
-                          </DialogHeader>
-                          
-                          <div className="space-y-4 py-4">
-                            <div className="grid grid-cols-2 gap-4">
-                              <div className="space-y-2">
-                                <Label htmlFor="startTime">Heure de début</Label>
-                                <Input 
-                                  id="startTime" 
-                                  type="time" 
-                                  defaultValue="08:00"
-                                />
-                              </div>
-                              
-                              <div className="space-y-2">
-                                <Label htmlFor="endTime">Heure de fin</Label>
-                                <Input 
-                                  id="endTime" 
-                                  type="time" 
-                                  defaultValue="18:00"
-                                />
-                              </div>
-                            </div>
-                            
-                            <div className="space-y-2">
-                              <Label>Temps de fonctionnement:</Label>
-                              <div className="text-sm font-medium">10:00 heures</div>
-                            </div>
-                          </div>
-                          
-                          <div className="flex justify-end gap-2">
-                            <DialogClose asChild>
-                              <Button variant="outline">Annuler</Button>
-                            </DialogClose>
-                            <DialogClose asChild>
-                              <Button type="submit">Enregistrer</Button>
-                            </DialogClose>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
                     </div>
                   ) : (
                     <div className="space-y-3 mt-2">
-                      <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-400">
-                        <Timer className="h-3 w-3 mr-1" /> Mode automatique
-                      </Badge>
-                      
-                      <div className="text-xs text-muted-foreground mt-2">
-                        <div className="flex justify-between">
-                          <span>Optimisation automatique</span>
-                          <span className="font-medium text-green-600">Activée</span>
+                      {device.scheduledTime ? (
+                        <>
+                          <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-400">
+                            <Timer className="h-3 w-3 mr-1" /> Mode automatique
+                          </Badge>
+                          
+                          <div className="text-xs text-muted-foreground mt-2">
+                            <div className="flex justify-between">
+                              <span>Date programmée:</span>
+                              <span className="font-medium">
+                                {device.scheduledTime.date 
+                                  ? format(device.scheduledTime.date, 'dd/MM/yyyy') 
+                                  : 'Tous les jours'}
+                              </span>
+                            </div>
+                            <div className="flex justify-between mt-1">
+                              <span>Heure début:</span>
+                              <span className="font-medium">{device.scheduledTime.startTime}</span>
+                            </div>
+                            <div className="flex justify-between mt-1">
+                              <span>Heure fin:</span>
+                              <span className="font-medium">{device.scheduledTime.endTime}</span>
+                            </div>
+                          </div>
+                          
+                          <div className="flex justify-end">
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button variant="outline" size="sm">
+                                  <Clock className="h-3 w-3 mr-1" /> Modifier
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>Modifier la programmation - {device.name}</DialogTitle>
+                                  <DialogDescription>
+                                    Définissez les heures et la date de fonctionnement
+                                  </DialogDescription>
+                                </DialogHeader>
+                                
+                                <AutomaticModeScheduler 
+                                  device={device} 
+                                  onSchedule={(startTime, endTime, date) => {
+                                    scheduleDevice(device.id, startTime, endTime, date);
+                                  }}
+                                  selectedDate={selectedDate}
+                                  setSelectedDate={setSelectedDate}
+                                />
+                              </DialogContent>
+                            </Dialog>
+                          </div>
+                        </>
+                      ) : (
+                        <div className="flex justify-center">
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button>
+                                <Clock className="h-4 w-4 mr-2" /> Programmer
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                              <DialogHeader>
+                                <DialogTitle>Programmation - {device.name}</DialogTitle>
+                                <DialogDescription>
+                                  Définissez les heures et la date de fonctionnement
+                                </DialogDescription>
+                              </DialogHeader>
+                              
+                              <AutomaticModeScheduler 
+                                device={device} 
+                                onSchedule={(startTime, endTime, date) => {
+                                  scheduleDevice(device.id, startTime, endTime, date);
+                                }}
+                                selectedDate={selectedDate}
+                                setSelectedDate={setSelectedDate}
+                              />
+                            </DialogContent>
+                          </Dialog>
                         </div>
-                        <div className="flex justify-between mt-1">
-                          <span>Prochaine activation</span>
-                          <span className="font-medium">18:30</span>
-                        </div>
-                        <div className="flex justify-between mt-1">
-                          <span>Temps de fonctionnement estimé</span>
-                          <span className="font-medium">2h30</span>
-                        </div>
-                      </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -352,6 +403,127 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
         </div>
       </CardContent>
     </Card>
+  );
+};
+
+// Composant pour programmer en mode automatique
+interface AutomaticModeSchedulerProps {
+  device: Device;
+  onSchedule: (startTime: string, endTime: string, date?: Date) => void;
+  selectedDate: Date | undefined;
+  setSelectedDate: React.Dispatch<React.SetStateAction<Date | undefined>>;
+}
+
+const AutomaticModeScheduler: React.FC<AutomaticModeSchedulerProps> = ({ 
+  device, 
+  onSchedule,
+  selectedDate,
+  setSelectedDate
+}) => {
+  const [startTime, setStartTime] = useState(device.scheduledTime?.startTime || "08:00");
+  const [endTime, setEndTime] = useState(device.scheduledTime?.endTime || "18:00");
+  const [useDateScheduling, setUseDateScheduling] = useState(!!device.scheduledTime?.date);
+
+  // Calculer le temps de fonctionnement
+  const calculateOperationTime = () => {
+    const start = new Date(`2000-01-01T${startTime}`);
+    const end = new Date(`2000-01-01T${endTime}`);
+    
+    const diffMs = end.getTime() - start.getTime();
+    const diffHrs = Math.floor(diffMs / 3600000);
+    const diffMins = Math.round((diffMs % 3600000) / 60000);
+    
+    return `${diffHrs}h${diffMins > 0 ? diffMins.toString().padStart(2, '0') : '00'}`;
+  };
+
+  return (
+    <div className="space-y-4 py-4">
+      <div className="space-y-2">
+        <div className="flex items-center space-x-2">
+          <Switch 
+            id="use-date" 
+            checked={useDateScheduling}
+            onCheckedChange={setUseDateScheduling}
+          />
+          <Label htmlFor="use-date">Programmer une date spécifique</Label>
+        </div>
+        
+        {useDateScheduling && (
+          <div className="pt-2">
+            <Label>Sélectionner une date</Label>
+            <div className="pt-2">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !selectedDate && "text-muted-foreground"
+                    )}
+                  >
+                    <Calendar className="mr-2 h-4 w-4" />
+                    {selectedDate ? format(selectedDate, "PPP") : <span>Choisir une date</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <CalendarComponent
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={setSelectedDate}
+                    initialFocus
+                    className="p-3 pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+          </div>
+        )}
+      </div>
+      
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="startTime">Heure de début</Label>
+          <Input 
+            id="startTime" 
+            type="time" 
+            value={startTime}
+            onChange={(e) => setStartTime(e.target.value)}
+          />
+        </div>
+        
+        <div className="space-y-2">
+          <Label htmlFor="endTime">Heure de fin</Label>
+          <Input 
+            id="endTime" 
+            type="time" 
+            value={endTime}
+            onChange={(e) => setEndTime(e.target.value)}
+          />
+        </div>
+      </div>
+      
+      <div className="space-y-2">
+        <Label>Temps de fonctionnement:</Label>
+        <div className="text-sm font-medium">{calculateOperationTime()}</div>
+      </div>
+      
+      <div className="flex justify-end gap-2">
+        <DialogClose asChild>
+          <Button variant="outline">Annuler</Button>
+        </DialogClose>
+        <DialogClose asChild>
+          <Button 
+            onClick={() => onSchedule(
+              startTime, 
+              endTime, 
+              useDateScheduling ? selectedDate : undefined
+            )}
+          >
+            Enregistrer
+          </Button>
+        </DialogClose>
+      </div>
+    </div>
   );
 };
 
