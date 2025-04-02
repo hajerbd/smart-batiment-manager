@@ -38,6 +38,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { format } from 'date-fns';
+import { toast } from "@/hooks/use-toast";
 
 // Types
 interface Device {
@@ -209,23 +210,52 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
     );
   }
   
-  // Fonction pour basculer l'état d'un appareil
+  // Fonction pour basculer l'état d'un appareil en mode manuel
   const toggleDevice = (deviceId: string) => {
+    if (controlMode !== 'manual') {
+      toast({
+        title: "Mode manuel requis",
+        description: "Passez en mode manuel pour activer/désactiver directement les appareils.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     setRooms(rooms.map(room => 
       room.id === selectedRoom.id ? {
         ...room,
         devices: room.devices.map(device =>
           device.id === deviceId ? { 
             ...device, 
-            status: !device.status
+            status: !device.status,
+            // Reset scheduled time if turning off
+            scheduledTime: device.status ? undefined : device.scheduledTime
           } : device
         )
       } : room
     ));
+    
+    // Notification
+    const device = selectedRoom.devices.find(d => d.id === deviceId);
+    if (device) {
+      toast({
+        title: device.status ? `${device.name} désactivé` : `${device.name} activé`,
+        description: device.status ? "L'appareil a été éteint" : "L'appareil a été allumé",
+      });
+    }
   };
 
-  // Fonction pour programmer un appareil
+  // Fonction pour programmer un appareil en mode automatique
   const scheduleDevice = (deviceId: string, startTime: string, endTime: string, date?: Date) => {
+    if (controlMode !== 'auto') {
+      toast({
+        title: "Mode automatique requis",
+        description: "Passez en mode automatique pour programmer les appareils.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     setRooms(rooms.map(room => 
       room.id === selectedRoom.id ? {
         ...room,
@@ -236,11 +266,37 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
               startTime,
               endTime,
               date
-            }
+            },
+            status: true // Activer l'appareil quand programmé
           } : device
         )
       } : room
     ));
+    
+    // Notification
+    const device = selectedRoom.devices.find(d => d.id === deviceId);
+    if (device) {
+      toast({
+        title: `${device.name} programmé`,
+        description: date 
+          ? `Programmé pour le ${format(date, 'dd/MM/yyyy')} de ${startTime} à ${endTime}` 
+          : `Programmé quotidiennement de ${startTime} à ${endTime}`,
+      });
+    }
+  };
+  
+  // Gérer le changement de mode
+  const handleModeChange = (value: string) => {
+    if (value) {
+      setControlMode(value as 'manual' | 'auto');
+      
+      toast({
+        title: `Mode ${value === 'manual' ? 'manuel' : 'automatique'} activé`,
+        description: value === 'manual' 
+          ? "Vous pouvez maintenant activer ou désactiver directement les appareils."
+          : "Vous pouvez maintenant programmer les appareils pour qu'ils fonctionnent automatiquement.",
+      });
+    }
   };
   
   return (
@@ -252,7 +308,7 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
           </Button>
           <CardTitle>{selectedRoom.name}</CardTitle>
         </div>
-        <ToggleGroup type="single" value={controlMode} onValueChange={(value) => value && setControlMode(value as 'manual' | 'auto')}>
+        <ToggleGroup type="single" value={controlMode} onValueChange={handleModeChange}>
           <ToggleGroupItem value="manual" aria-label="Manuel" className="flex items-center gap-1">
             <Zap className="h-4 w-4" />
             <span className="hidden sm:inline">Manuel</span>
@@ -290,93 +346,97 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
                     )}
                   </div>
                 </div>
+                
+                {/* Contrôle différent selon le mode */}
                 {controlMode === 'manual' ? (
                   <Switch
                     checked={device.status}
                     onCheckedChange={() => toggleDevice(device.id)}
                   />
                 ) : (
-                  device.status && (
-                    <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-400">
-                      <Timer className="h-3 w-3 mr-1" /> Programmé
-                    </Badge>
-                  )
+                  <div className="flex flex-col items-end gap-2">
+                    {device.scheduledTime ? (
+                      <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-400">
+                        <Timer className="h-3 w-3 mr-1" /> Programmé
+                      </Badge>
+                    ) : (
+                      <Badge variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400">
+                        Non programmé
+                      </Badge>
+                    )}
+                  </div>
                 )}
               </div>
               
-              {device.status && (
-                <div className="space-y-3">
-                  {controlMode === 'manual' ? (
-                    <div className="flex justify-between items-center mt-2">
-                      <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400">
-                        <Zap className="h-3 w-3 mr-1" /> Actif
-                      </Badge>
-                    </div>
-                  ) : (
-                    <div className="space-y-3 mt-2">
-                      {device.scheduledTime ? (
-                        <>
-                          <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-400">
-                            <Timer className="h-3 w-3 mr-1" /> Mode automatique
-                          </Badge>
-                          
-                          <div className="text-xs text-muted-foreground mt-2">
-                            <div className="flex justify-between">
-                              <span>Date programmée:</span>
-                              <span className="font-medium">
-                                {device.scheduledTime.date 
-                                  ? format(device.scheduledTime.date, 'dd/MM/yyyy') 
-                                  : 'Tous les jours'}
-                              </span>
-                            </div>
-                            <div className="flex justify-between mt-1">
-                              <span>Heure début:</span>
-                              <span className="font-medium">{device.scheduledTime.startTime}</span>
-                            </div>
-                            <div className="flex justify-between mt-1">
-                              <span>Heure fin:</span>
-                              <span className="font-medium">{device.scheduledTime.endTime}</span>
-                            </div>
+              {/* Affichage d'état et options selon le mode */}
+              <div className="space-y-3">
+                {controlMode === 'manual' ? (
+                  /* Mode manuel - afficher simplement l'état actif/inactif */
+                  device.status && (
+                    <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400">
+                      <Zap className="h-3 w-3 mr-1" /> Actif
+                    </Badge>
+                  )
+                ) : (
+                  /* Mode automatique - afficher la programmation ou option de programmer */
+                  <div className="space-y-3 mt-2">
+                    {device.scheduledTime ? (
+                      <>
+                        <div className="text-xs text-muted-foreground mt-2">
+                          <div className="flex justify-between">
+                            <span>Date programmée:</span>
+                            <span className="font-medium">
+                              {device.scheduledTime.date 
+                                ? format(device.scheduledTime.date, 'dd/MM/yyyy') 
+                                : 'Tous les jours'}
+                            </span>
                           </div>
-                          
-                          <div className="flex justify-end">
-                            <Dialog>
-                              <DialogTrigger asChild>
-                                <Button variant="outline" size="sm">
-                                  <Clock className="h-3 w-3 mr-1" /> Modifier
-                                </Button>
-                              </DialogTrigger>
-                              <DialogContent>
-                                <DialogHeader>
-                                  <DialogTitle>Modifier la programmation - {device.name}</DialogTitle>
-                                  <DialogDescription>
-                                    Définissez les heures et la date de fonctionnement
-                                  </DialogDescription>
-                                </DialogHeader>
-                                
-                                <AutomaticModeScheduler 
-                                  device={device} 
-                                  onSchedule={(startTime, endTime, date) => {
-                                    scheduleDevice(device.id, startTime, endTime, date);
-                                  }}
-                                  selectedDate={selectedDate}
-                                  setSelectedDate={setSelectedDate}
-                                />
-                              </DialogContent>
-                            </Dialog>
+                          <div className="flex justify-between mt-1">
+                            <span>Heure début:</span>
+                            <span className="font-medium">{device.scheduledTime.startTime}</span>
                           </div>
-                        </>
-                      ) : (
-                        <div className="flex justify-center">
+                          <div className="flex justify-between mt-1">
+                            <span>Heure fin:</span>
+                            <span className="font-medium">{device.scheduledTime.endTime}</span>
+                          </div>
+                        </div>
+                        
+                        <div className="flex justify-between">
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => {
+                              setRooms(rooms.map(room => 
+                                room.id === selectedRoom.id ? {
+                                  ...room,
+                                  devices: room.devices.map(d =>
+                                    d.id === device.id ? { 
+                                      ...d, 
+                                      status: false,
+                                      scheduledTime: undefined
+                                    } : d
+                                  )
+                                } : room
+                              ));
+                              toast({
+                                title: `${device.name} désactivé`,
+                                description: "La programmation a été supprimée",
+                              });
+                            }}
+                            className="text-destructive hover:text-destructive"
+                          >
+                            Annuler
+                          </Button>
+                          
                           <Dialog>
                             <DialogTrigger asChild>
-                              <Button>
-                                <Clock className="h-4 w-4 mr-2" /> Programmer
+                              <Button variant="outline" size="sm">
+                                <Clock className="h-3 w-3 mr-1" /> Modifier
                               </Button>
                             </DialogTrigger>
                             <DialogContent>
                               <DialogHeader>
-                                <DialogTitle>Programmation - {device.name}</DialogTitle>
+                                <DialogTitle>Modifier la programmation - {device.name}</DialogTitle>
                                 <DialogDescription>
                                   Définissez les heures et la date de fonctionnement
                                 </DialogDescription>
@@ -393,11 +453,38 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
                             </DialogContent>
                           </Dialog>
                         </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              )}
+                      </>
+                    ) : (
+                      <div className="flex justify-center">
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button>
+                              <Clock className="h-4 w-4 mr-2" /> Programmer
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Programmation - {device.name}</DialogTitle>
+                              <DialogDescription>
+                                Définissez les heures et la date de fonctionnement
+                              </DialogDescription>
+                            </DialogHeader>
+                            
+                            <AutomaticModeScheduler 
+                              device={device} 
+                              onSchedule={(startTime, endTime, date) => {
+                                scheduleDevice(device.id, startTime, endTime, date);
+                              }}
+                              selectedDate={selectedDate}
+                              setSelectedDate={setSelectedDate}
+                            />
+                          </DialogContent>
+                        </Dialog>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           ))}
         </div>
