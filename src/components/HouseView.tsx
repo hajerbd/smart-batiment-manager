@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
@@ -58,15 +59,15 @@ const rooms: Room[] = [
 const getRoomIcon = (type: Room['type']) => {
   switch (type) {
     case 'bedroom':
-      return <Bed className="h-5 w-5" />;
+      return <Bed className="h-8 w-8" />;
     case 'livingroom':
-      return <Sofa className="h-5 w-5" />;
+      return <Sofa className="h-8 w-8" />;
     case 'hallway':
-      return <ArrowRightCircle className="h-5 w-5" />;
+      return <ArrowRightCircle className="h-8 w-8" />;
     case 'garden':
-      return <Timer className="h-5 w-5" />;
+      return <Timer className="h-8 w-8" />;
     default:
-      return <Home className="h-5 w-5" />;
+      return <Home className="h-8 w-8" />;
   }
 };
 
@@ -78,46 +79,46 @@ const HouseView: React.FC<HouseViewProps> = ({ onSelectRoom }) => {
   const [controlMode, setControlMode] = useState<'manual' | 'auto'>('manual');
   
   return (
-    <Card className="w-full h-full">
-      <CardHeader className="py-2 px-4 flex flex-row items-center justify-between">
-        <CardTitle className="text-sm">Plan de la maison</CardTitle>
-        <div className="flex items-center space-x-1">
-          <span className="text-xs font-medium">Mode:</span>
+    <Card className="w-full h-full shadow-xl">
+      <CardHeader className="py-4 px-6 flex flex-row items-center justify-between">
+        <CardTitle className="text-xl">Plan de la maison</CardTitle>
+        <div className="flex items-center space-x-3">
+          <span className="text-sm font-medium">Mode:</span>
           <Badge 
             variant="outline" 
             className={cn(
-              "cursor-pointer transition-colors text-[10px] py-0 px-1",
+              "cursor-pointer transition-colors text-sm py-1 px-3",
               controlMode === 'manual' 
                 ? "bg-blue-100 text-blue-800 hover:bg-blue-200 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800" 
                 : "bg-gray-100 text-gray-800 hover:bg-gray-200 border-gray-200 dark:bg-gray-900/30 dark:text-gray-400 dark:border-gray-800"
             )}
             onClick={() => setControlMode('manual')}
           >
-            {controlMode === 'manual' ? <ToggleRight className="h-2 w-2 mr-0.5" /> : <ToggleLeft className="h-2 w-2 mr-0.5" />}
-            M
+            {controlMode === 'manual' ? <ToggleRight className="h-4 w-4 mr-1" /> : <ToggleLeft className="h-4 w-4 mr-1" />}
+            Manuel
           </Badge>
           <Badge 
             variant="outline" 
             className={cn(
-              "cursor-pointer transition-colors text-[10px] py-0 px-1",
+              "cursor-pointer transition-colors text-sm py-1 px-3",
               controlMode === 'auto' 
                 ? "bg-green-100 text-green-800 hover:bg-green-200 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800" 
                 : "bg-gray-100 text-gray-800 hover:bg-gray-200 border-gray-200 dark:bg-gray-900/30 dark:text-gray-400 dark:border-gray-800"
             )}
             onClick={() => setControlMode('auto')}
           >
-            {controlMode === 'auto' ? <ToggleRight className="h-2 w-2 mr-0.5" /> : <ToggleLeft className="h-2 w-2 mr-0.5" />}
-            A
+            {controlMode === 'auto' ? <ToggleRight className="h-4 w-4 mr-1" /> : <ToggleLeft className="h-4 w-4 mr-1" />}
+            Auto
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="pt-0 px-2 pb-2">
+      <CardContent className="pt-0 px-4 pb-4">
         {/* Plan 2D de la maison adapté à la hauteur disponible */}
-        <div className="relative border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-900/50 h-[calc(100vh-180px)] overflow-hidden">
+        <div className="relative border-2 border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-900/50 h-[calc(100vh-180px)] overflow-hidden">
           {rooms.map((room) => (
             <div
               key={room.id}
-              className="absolute border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 cursor-pointer hover:bg-primary/5 transition-colors flex flex-col items-center justify-center p-1 shadow-sm"
+              className="absolute border-2 border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 cursor-pointer hover:bg-primary/5 transition-colors flex flex-col items-center justify-center p-4 shadow-md"
               style={{
                 top: room.position.top,
                 left: room.position.left,
@@ -126,24 +127,25 @@ const HouseView: React.FC<HouseViewProps> = ({ onSelectRoom }) => {
               }}
               onClick={() => onSelectRoom(room.id)}
             >
-              <div className="p-1 bg-primary/10 text-primary rounded-full mb-1">
+              <div className="p-3 bg-primary/10 text-primary rounded-full mb-3">
                 {getRoomIcon(room.type)}
               </div>
-              <span className="text-[10px] font-medium">{room.name}</span>
+              <span className="text-base font-medium">{room.name}</span>
               
               {/* Indicateur du mode de contrôle */}
-              <div className="absolute top-1 right-1">
+              <div className="absolute top-2 right-2">
                 <Badge variant="outline" className={cn(
-                  "text-[8px] py-0 px-1",
+                  "text-xs py-1 px-2",
                   controlMode === 'manual' 
                     ? "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400" 
                     : "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-400"
                 )}>
                   {controlMode === 'manual' ? (
-                    <Zap className="h-2 w-2" />
+                    <Zap className="h-4 w-4 mr-1" />
                   ) : (
-                    <Timer className="h-2 w-2" />
+                    <Timer className="h-4 w-4 mr-1" />
                   )}
+                  {controlMode === 'manual' ? 'Manuel' : 'Auto'}
                 </Badge>
               </div>
             </div>
