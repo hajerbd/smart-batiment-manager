@@ -80,7 +80,7 @@ const HouseView: React.FC<HouseViewProps> = ({ onSelectRoom }) => {
   const [controlMode, setControlMode] = useState<'manual' | 'auto'>('manual');
   
   return (
-    <Card className="w-full h-full shadow-xl">
+    <Card className="w-full h-full shadow-xl overflow-hidden">
       <CardHeader className="py-6 px-8 flex flex-row items-center justify-between">
         <CardTitle className="text-3xl font-bold">Plan de la maison</CardTitle>
         <div className="flex items-center space-x-4">
@@ -113,46 +113,46 @@ const HouseView: React.FC<HouseViewProps> = ({ onSelectRoom }) => {
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="pt-0 px-6 pb-8">
-        {/* ScrollArea covers the entire container height minus header */}
-        <ScrollArea className="h-[calc(100vh-220px)]">
-          {/* Plan 2D de la maison avec une hauteur fixe encore plus grande pour rendre toutes les pièces visibles */}
-          <div className="relative border-4 border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-900/50 min-h-[900px] p-6">
-            {rooms.map((room) => (
-              <div
-                key={room.id}
-                className="absolute border-4 border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 cursor-pointer hover:bg-primary/5 transition-colors flex flex-col items-center justify-center p-8 shadow-xl"
-                style={{
-                  top: room.position.top,
-                  left: room.position.left,
-                  width: room.position.width,
-                  height: room.position.height,
-                }}
-                onClick={() => onSelectRoom(room.id)}
-              >
-                <div className="p-5 bg-primary/10 text-primary rounded-full mb-5">
-                  {getRoomIcon(room.type)}
+      <CardContent className="p-0 overflow-hidden h-[calc(100%-80px)]">
+        <ScrollArea className="h-full w-full">
+          <div className="p-6">
+            <div className="relative border-4 border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-900/50 min-h-[800px] p-6">
+              {rooms.map((room) => (
+                <div
+                  key={room.id}
+                  className="absolute border-4 border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 cursor-pointer hover:bg-primary/5 transition-colors flex flex-col items-center justify-center p-8 shadow-xl"
+                  style={{
+                    top: room.position.top,
+                    left: room.position.left,
+                    width: room.position.width,
+                    height: room.position.height,
+                  }}
+                  onClick={() => onSelectRoom(room.id)}
+                >
+                  <div className="p-5 bg-primary/10 text-primary rounded-full mb-5">
+                    {getRoomIcon(room.type)}
+                  </div>
+                  <span className="text-2xl font-medium">{room.name}</span>
+                  
+                  {/* Indicateur du mode de contrôle */}
+                  <div className="absolute top-3 right-3">
+                    <Badge variant="outline" className={cn(
+                      "text-base py-1 px-3",
+                      controlMode === 'manual' 
+                        ? "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400" 
+                        : "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-400"
+                    )}>
+                      {controlMode === 'manual' ? (
+                        <Zap className="h-6 w-6 mr-2" />
+                      ) : (
+                        <Timer className="h-6 w-6 mr-2" />
+                      )}
+                      {controlMode === 'manual' ? 'Manuel' : 'Auto'}
+                    </Badge>
+                  </div>
                 </div>
-                <span className="text-2xl font-medium">{room.name}</span>
-                
-                {/* Indicateur du mode de contrôle */}
-                <div className="absolute top-3 right-3">
-                  <Badge variant="outline" className={cn(
-                    "text-base py-1 px-3",
-                    controlMode === 'manual' 
-                      ? "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400" 
-                      : "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-400"
-                  )}>
-                    {controlMode === 'manual' ? (
-                      <Zap className="h-6 w-6 mr-2" />
-                    ) : (
-                      <Timer className="h-6 w-6 mr-2" />
-                    )}
-                    {controlMode === 'manual' ? 'Manuel' : 'Auto'}
-                  </Badge>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </ScrollArea>
       </CardContent>

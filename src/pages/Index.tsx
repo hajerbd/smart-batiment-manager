@@ -61,7 +61,7 @@ const Dashboard = () => {
         
         {/* Bottom row avec plan de maison et alertes */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
-          <div className="h-full">
+          <div className="h-full overflow-hidden">
             {selectedRoomId ? (
               <ScrollArea className="h-full">
                 <RoomDeviceControl 
@@ -70,7 +70,9 @@ const Dashboard = () => {
                 />
               </ScrollArea>
             ) : (
-              <HouseView onSelectRoom={setSelectedRoomId} />
+              <div className="h-full overflow-hidden">
+                <HouseView onSelectRoom={setSelectedRoomId} />
+              </div>
             )}
           </div>
           <div className="h-full">
