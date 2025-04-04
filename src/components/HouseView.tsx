@@ -80,47 +80,50 @@ const HouseView: React.FC<HouseViewProps> = ({ onSelectRoom }) => {
   const [controlMode, setControlMode] = useState<'manual' | 'auto'>('manual');
   
   return (
-    <Card className="w-full h-full shadow-xl overflow-hidden">
-      <CardHeader className="py-6 px-8 flex flex-row items-center justify-between">
-        <CardTitle className="text-3xl font-bold">Plan de la maison</CardTitle>
-        <div className="flex items-center space-x-4">
-          <span className="text-lg font-medium">Mode:</span>
+    <Card className="w-full h-full shadow-xl overflow-hidden flex flex-col">
+      <CardHeader className="py-4 px-6 flex flex-row items-center justify-between shrink-0">
+        <CardTitle className="text-2xl font-bold">Plan de la maison</CardTitle>
+        <div className="flex items-center space-x-2 md:space-x-4">
+          <span className="text-base font-medium">Mode:</span>
           <Badge 
             variant="outline" 
             className={cn(
-              "cursor-pointer transition-colors text-lg py-3 px-5",
+              "cursor-pointer transition-colors text-sm py-1 px-2 md:text-lg md:py-3 md:px-5",
               controlMode === 'manual' 
                 ? "bg-blue-100 text-blue-800 hover:bg-blue-200 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800" 
                 : "bg-gray-100 text-gray-800 hover:bg-gray-200 border-gray-200 dark:bg-gray-900/30 dark:text-gray-400 dark:border-gray-800"
             )}
             onClick={() => setControlMode('manual')}
           >
-            {controlMode === 'manual' ? <ToggleRight className="h-6 w-6 mr-2" /> : <ToggleLeft className="h-6 w-6 mr-2" />}
+            {controlMode === 'manual' ? <ToggleRight className="h-4 w-4 md:h-6 md:w-6 mr-1 md:mr-2" /> : <ToggleLeft className="h-4 w-4 md:h-6 md:w-6 mr-1 md:mr-2" />}
             Manuel
           </Badge>
           <Badge 
             variant="outline" 
             className={cn(
-              "cursor-pointer transition-colors text-lg py-3 px-5",
+              "cursor-pointer transition-colors text-sm py-1 px-2 md:text-lg md:py-3 md:px-5",
               controlMode === 'auto' 
                 ? "bg-green-100 text-green-800 hover:bg-green-200 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800" 
                 : "bg-gray-100 text-gray-800 hover:bg-gray-200 border-gray-200 dark:bg-gray-900/30 dark:text-gray-400 dark:border-gray-800"
             )}
             onClick={() => setControlMode('auto')}
           >
-            {controlMode === 'auto' ? <ToggleRight className="h-6 w-6 mr-2" /> : <ToggleLeft className="h-6 w-6 mr-2" />}
+            {controlMode === 'auto' ? <ToggleRight className="h-4 w-4 md:h-6 md:w-6 mr-1 md:mr-2" /> : <ToggleLeft className="h-4 w-4 md:h-6 md:w-6 mr-1 md:mr-2" />}
             Auto
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="p-0 overflow-hidden h-[calc(100%-80px)]">
+      <CardContent className="p-0 flex-grow overflow-hidden">
         <ScrollArea className="h-full w-full">
-          <div className="p-6">
-            <div className="relative border-4 border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-900/50 min-h-[800px] p-6">
+          <div className="p-4 md:p-6">
+            <div 
+              className="relative border-4 border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-900/50 h-[600px] md:h-[800px]"
+              style={{ minWidth: '800px' }} // Ensure horizontal scrolling if needed
+            >
               {rooms.map((room) => (
                 <div
                   key={room.id}
-                  className="absolute border-4 border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 cursor-pointer hover:bg-primary/5 transition-colors flex flex-col items-center justify-center p-8 shadow-xl"
+                  className="absolute border-4 border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 cursor-pointer hover:bg-primary/5 transition-colors flex flex-col items-center justify-center p-4 md:p-8 shadow-xl"
                   style={{
                     top: room.position.top,
                     left: room.position.left,
@@ -129,23 +132,23 @@ const HouseView: React.FC<HouseViewProps> = ({ onSelectRoom }) => {
                   }}
                   onClick={() => onSelectRoom(room.id)}
                 >
-                  <div className="p-5 bg-primary/10 text-primary rounded-full mb-5">
+                  <div className="p-3 md:p-5 bg-primary/10 text-primary rounded-full mb-2 md:mb-5">
                     {getRoomIcon(room.type)}
                   </div>
-                  <span className="text-2xl font-medium">{room.name}</span>
+                  <span className="text-lg md:text-2xl font-medium">{room.name}</span>
                   
                   {/* Indicateur du mode de contrôle */}
-                  <div className="absolute top-3 right-3">
+                  <div className="absolute top-2 right-2 md:top-3 md:right-3">
                     <Badge variant="outline" className={cn(
-                      "text-base py-1 px-3",
+                      "text-xs md:text-base py-0.5 px-1 md:py-1 md:px-3",
                       controlMode === 'manual' 
                         ? "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400" 
                         : "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-400"
                     )}>
                       {controlMode === 'manual' ? (
-                        <Zap className="h-6 w-6 mr-2" />
+                        <Zap className="h-3 w-3 md:h-6 md:w-6 mr-1 md:mr-2" />
                       ) : (
-                        <Timer className="h-6 w-6 mr-2" />
+                        <Timer className="h-3 w-3 md:h-6 md:w-6 mr-1 md:mr-2" />
                       )}
                       {controlMode === 'manual' ? 'Manuel' : 'Auto'}
                     </Badge>
