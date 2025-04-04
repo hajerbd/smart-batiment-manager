@@ -17,40 +17,40 @@ const Dashboard = () => {
       <DashboardHeader title="Tableau de bord VitaSmart" />
       <div className="flex-1 p-6 overflow-hidden grid grid-rows-[auto_1fr] gap-6">
         {/* Top row avec stats et météo */}
-        <div className="grid grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Stats overview - 3 premières colonnes */}
           <Card className="shadow-lg hover:shadow-xl transition-all">
             <CardContent className="p-6 flex items-center space-x-4">
-              <div className="p-3 bg-green-100 rounded-full dark:bg-green-900">
-                <CircleCheck className="h-8 w-8 text-green-600 dark:text-green-400" />
+              <div className="p-4 bg-green-100 rounded-full dark:bg-green-900">
+                <CircleCheck className="h-10 w-10 text-green-600 dark:text-green-400" />
               </div>
               <div>
-                <p className="text-base text-muted-foreground font-medium">Systèmes actifs</p>
-                <h3 className="text-3xl font-bold">95%</h3>
+                <p className="text-lg text-muted-foreground font-medium">Systèmes actifs</p>
+                <h3 className="text-4xl font-bold">95%</h3>
               </div>
             </CardContent>
           </Card>
           
           <Card className="shadow-lg hover:shadow-xl transition-all">
             <CardContent className="p-6 flex items-center space-x-4">
-              <div className="p-3 bg-blue-100 rounded-full dark:bg-blue-900">
-                <Home className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+              <div className="p-4 bg-blue-100 rounded-full dark:bg-blue-900">
+                <Home className="h-10 w-10 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <p className="text-base text-muted-foreground font-medium">Pièces gérées</p>
-                <h3 className="text-3xl font-bold">5</h3>
+                <p className="text-lg text-muted-foreground font-medium">Pièces gérées</p>
+                <h3 className="text-4xl font-bold">5</h3>
               </div>
             </CardContent>
           </Card>
           
           <Card className="shadow-lg hover:shadow-xl transition-all">
             <CardContent className="p-6 flex items-center space-x-4">
-              <div className="p-3 bg-purple-100 rounded-full dark:bg-purple-900">
-                <Thermometer className="h-8 w-8 text-purple-600 dark:text-purple-400" />
+              <div className="p-4 bg-purple-100 rounded-full dark:bg-purple-900">
+                <Thermometer className="h-10 w-10 text-purple-600 dark:text-purple-400" />
               </div>
               <div>
-                <p className="text-base text-muted-foreground font-medium">Temp. moyenne</p>
-                <h3 className="text-3xl font-bold">22°C</h3>
+                <p className="text-lg text-muted-foreground font-medium">Temp. moyenne</p>
+                <h3 className="text-4xl font-bold">22°C</h3>
               </div>
             </CardContent>
           </Card>
@@ -60,7 +60,7 @@ const Dashboard = () => {
         </div>
         
         {/* Bottom row avec plan de maison et alertes */}
-        <div className="grid grid-cols-2 gap-6 h-full">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
           <div className="h-full">
             {selectedRoomId ? (
               <ScrollArea className="h-full">
