@@ -60,15 +60,15 @@ const rooms: Room[] = [
 const getRoomIcon = (type: Room['type']) => {
   switch (type) {
     case 'bedroom':
-      return <Bed className="h-14 w-14" />;
+      return <Bed className="h-6 w-6 md:h-8 md:w-8" />; // Taille réduite
     case 'livingroom':
-      return <Sofa className="h-14 w-14" />;
+      return <Sofa className="h-6 w-6 md:h-8 md:w-8" />; // Taille réduite
     case 'hallway':
-      return <ArrowRightCircle className="h-14 w-14" />;
+      return <ArrowRightCircle className="h-6 w-6 md:h-8 md:w-8" />; // Taille réduite
     case 'garden':
-      return <Timer className="h-14 w-14" />;
+      return <Timer className="h-6 w-6 md:h-8 md:w-8" />; // Taille réduite
     default:
-      return <Home className="h-14 w-14" />;
+      return <Home className="h-6 w-6 md:h-8 md:w-8" />; // Taille réduite
   }
 };
 
@@ -88,27 +88,27 @@ const HouseView: React.FC<HouseViewProps> = ({ onSelectRoom }) => {
           <Badge 
             variant="outline" 
             className={cn(
-              "cursor-pointer transition-colors text-sm py-1 px-2 md:text-lg md:py-3 md:px-5",
+              "cursor-pointer transition-colors text-sm py-1 px-2 md:text-base md:py-2 md:px-3", // Taille réduite
               controlMode === 'manual' 
                 ? "bg-blue-100 text-blue-800 hover:bg-blue-200 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800" 
                 : "bg-gray-100 text-gray-800 hover:bg-gray-200 border-gray-200 dark:bg-gray-900/30 dark:text-gray-400 dark:border-gray-800"
             )}
             onClick={() => setControlMode('manual')}
           >
-            {controlMode === 'manual' ? <ToggleRight className="h-4 w-4 md:h-6 md:w-6 mr-1 md:mr-2" /> : <ToggleLeft className="h-4 w-4 md:h-6 md:w-6 mr-1 md:mr-2" />}
+            {controlMode === 'manual' ? <ToggleRight className="h-3 w-3 md:h-4 md:w-4 mr-1" /> : <ToggleLeft className="h-3 w-3 md:h-4 md:w-4 mr-1" />}
             Manuel
           </Badge>
           <Badge 
             variant="outline" 
             className={cn(
-              "cursor-pointer transition-colors text-sm py-1 px-2 md:text-lg md:py-3 md:px-5",
+              "cursor-pointer transition-colors text-sm py-1 px-2 md:text-base md:py-2 md:px-3", // Taille réduite
               controlMode === 'auto' 
                 ? "bg-green-100 text-green-800 hover:bg-green-200 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800" 
                 : "bg-gray-100 text-gray-800 hover:bg-gray-200 border-gray-200 dark:bg-gray-900/30 dark:text-gray-400 dark:border-gray-800"
             )}
             onClick={() => setControlMode('auto')}
           >
-            {controlMode === 'auto' ? <ToggleRight className="h-4 w-4 md:h-6 md:w-6 mr-1 md:mr-2" /> : <ToggleLeft className="h-4 w-4 md:h-6 md:w-6 mr-1 md:mr-2" />}
+            {controlMode === 'auto' ? <ToggleRight className="h-3 w-3 md:h-4 md:w-4 mr-1" /> : <ToggleLeft className="h-3 w-3 md:h-4 md:w-4 mr-1" />}
             Auto
           </Badge>
         </div>
@@ -128,7 +128,7 @@ const HouseView: React.FC<HouseViewProps> = ({ onSelectRoom }) => {
                 {rooms.map((room) => (
                   <div
                     key={room.id}
-                    className="absolute border-4 border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 cursor-pointer hover:bg-primary/5 transition-colors flex flex-col items-center justify-center p-4 md:p-8 shadow-xl"
+                    className="absolute border-4 border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 cursor-pointer hover:bg-primary/5 transition-colors flex flex-col items-center justify-center p-2 md:p-4 shadow-xl"
                     style={{
                       top: room.position.top,
                       left: room.position.left,
@@ -137,23 +137,23 @@ const HouseView: React.FC<HouseViewProps> = ({ onSelectRoom }) => {
                     }}
                     onClick={() => onSelectRoom(room.id)}
                   >
-                    <div className="p-3 md:p-5 bg-primary/10 text-primary rounded-full mb-2 md:mb-5">
+                    <div className="p-2 md:p-3 bg-primary/10 text-primary rounded-full mb-2 md:mb-3">
                       {getRoomIcon(room.type)}
                     </div>
-                    <span className="text-lg md:text-2xl font-medium">{room.name}</span>
+                    <span className="text-sm md:text-lg font-medium">{room.name}</span>
                     
                     {/* Indicateur du mode de contrôle */}
-                    <div className="absolute top-2 right-2 md:top-3 md:right-3">
+                    <div className="absolute top-1 right-1 md:top-2 md:right-2">
                       <Badge variant="outline" className={cn(
-                        "text-xs md:text-base py-0.5 px-1 md:py-1 md:px-3",
+                        "text-xs py-0.5 px-1 md:py-1 md:px-2",
                         controlMode === 'manual' 
                           ? "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400" 
                           : "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-400"
                       )}>
                         {controlMode === 'manual' ? (
-                          <Zap className="h-3 w-3 md:h-6 md:w-6 mr-1 md:mr-2" />
+                          <Zap className="h-2 w-2 md:h-3 md:w-3 mr-0.5 md:mr-1" />
                         ) : (
-                          <Timer className="h-3 w-3 md:h-6 md:w-6 mr-1 md:mr-2" />
+                          <Timer className="h-2 w-2 md:h-3 md:w-3 mr-0.5 md:mr-1" />
                         )}
                         {controlMode === 'manual' ? 'Manuel' : 'Auto'}
                       </Badge>
