@@ -26,46 +26,46 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ title }) => {
   };
 
   return (
-    <header className="sticky top-0 z-10 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border px-4 py-3">
+    <header className="sticky top-0 z-10 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border p-2 md:px-4 md:py-2">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">{title}</h1>
+        <h1 className="text-base md:text-lg font-semibold truncate">{title}</h1>
         
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-1 md:space-x-2">
           {!isMobile && (
-            <div className="relative w-64">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <div className="relative w-48 md:w-64">
+              <Search className="absolute left-2 top-2 h-3.5 w-3.5 text-muted-foreground" />
               <Input 
                 type="search" 
                 placeholder="Rechercher..." 
-                className="pl-8 w-full" 
+                className="pl-7 py-1 h-7 text-xs md:text-sm" 
               />
             </div>
           )}
           
-          <Button variant="ghost" size="icon" onClick={toggleTheme}>
-            {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+          <Button variant="ghost" size="sm" onClick={toggleTheme} className="h-7 w-7 p-0">
+            {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
           </Button>
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="relative">
-                <Bell size={20} />
-                <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500" />
+              <Button variant="ghost" size="sm" className="relative h-7 w-7 p-0">
+                <Bell size={16} />
+                <span className="absolute top-0.5 right-0.5 h-1.5 w-1.5 rounded-full bg-red-500" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-80">
-              <div className="px-4 py-3 font-medium">Notifications</div>
-              <DropdownMenuItem className="cursor-pointer flex flex-col items-start">
+            <DropdownMenuContent align="end" className="w-64 md:w-80">
+              <div className="px-2 py-1 md:px-4 md:py-2 text-xs md:text-sm font-medium">Notifications</div>
+              <DropdownMenuItem className="cursor-pointer flex flex-col items-start text-xs md:text-sm p-2">
                 <div className="font-medium">Alerte de température</div>
-                <div className="text-sm text-muted-foreground">Température élevée dans la salle serveur</div>
+                <div className="text-xs text-muted-foreground">Température élevée dans la salle serveur</div>
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer flex flex-col items-start">
+              <DropdownMenuItem className="cursor-pointer flex flex-col items-start text-xs md:text-sm p-2">
                 <div className="font-medium">Maintenance prévue</div>
-                <div className="text-sm text-muted-foreground">Maintenance du système HVAC à 14h00</div>
+                <div className="text-xs text-muted-foreground">Maintenance du système HVAC à 14h00</div>
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer flex flex-col items-start">
+              <DropdownMenuItem className="cursor-pointer flex flex-col items-start text-xs md:text-sm p-2">
                 <div className="font-medium">Économies d'énergie</div>
-                <div className="text-sm text-muted-foreground">15% d'économies d'énergie cette semaine</div>
+                <div className="text-xs text-muted-foreground">15% d'économies d'énergie cette semaine</div>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
