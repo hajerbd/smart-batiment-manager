@@ -17,9 +17,7 @@ const Dashboard = () => {
       <DashboardHeader title="Tableau de bord VitaSmart" />
       <div className="flex-1 overflow-auto">
         <div className="p-3 md:p-4 lg:p-6">
-          {/* Top row avec stats et météo - taille réduite */}
           <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4 mb-3 md:mb-4">
-            {/* Stats overview - taille réduite */}
             <Card className="shadow-md hover:shadow-lg transition-all">
               <CardContent className="p-2 md:p-4 flex items-center space-x-2 md:space-x-3">
                 <div className="p-2 bg-green-100 rounded-full dark:bg-green-900">
@@ -56,11 +54,9 @@ const Dashboard = () => {
               </CardContent>
             </Card>
 
-            {/* Weather widget - dernière colonne */}
             <WeatherWidget />
           </div>
           
-          {/* Bottom row avec plan de maison et alertes - plus responsive */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 md:gap-4">
             <div className="h-[400px] xs:h-[450px] md:h-[500px] lg:h-[550px]">
               {selectedRoomId ? (
@@ -87,3 +83,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
