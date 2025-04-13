@@ -13,7 +13,7 @@ import { cn } from '@/lib/utils';
 // Types
 interface AlertItem {
   id: string;
-  type: 'warning' | 'critical' | 'info';
+  type: 'critique' | 'avertissement' | 'information';
   title: string;
   description: string;
   time: string;
@@ -26,7 +26,7 @@ interface AlertItem {
 const mockAlerts: AlertItem[] = [
   {
     id: '1',
-    type: 'critical',
+    type: 'critique',
     title: 'Vanne de chauffage bloquée',
     description: 'La vanne de chauffage dans la Chambre n°1 ne répond plus aux commandes',
     time: 'Il y a 10 min',
@@ -36,7 +36,7 @@ const mockAlerts: AlertItem[] = [
   },
   {
     id: '2',
-    type: 'warning',
+    type: 'avertissement',
     title: 'Vanne d\'eau entartée',
     description: 'La vanne d\'irrigation du jardin présente des signes d\'entartrage',
     time: 'Il y a 25 min',
@@ -46,7 +46,7 @@ const mockAlerts: AlertItem[] = [
   },
   {
     id: '3',
-    type: 'info',
+    type: 'information',
     title: 'Maintenance planifiée',
     description: 'Maintenance du système de chauffage prévue demain à 18h00',
     time: 'Il y a 1h',
@@ -56,7 +56,7 @@ const mockAlerts: AlertItem[] = [
   },
   {
     id: '4',
-    type: 'warning',
+    type: 'avertissement',
     title: 'Débit d\'eau faible',
     description: 'Le débit d\'eau dans le système d\'irrigation est inférieur à la normale',
     time: 'Il y a 1h 30min',
@@ -66,7 +66,7 @@ const mockAlerts: AlertItem[] = [
   },
   {
     id: '5',
-    type: 'info',
+    type: 'information',
     title: 'Vanne de climatisation',
     description: 'La vanne de climatisation du salon a été remplacée avec succès',
     time: 'Il y a 2h',
@@ -79,18 +79,18 @@ const mockAlerts: AlertItem[] = [
 // Fonctions utilitaires pour les styles des alertes
 const getAlertColor = (type: AlertItem['type']) => {
   switch (type) {
-    case 'critical': return 'border-red-500 bg-red-50 dark:bg-red-950/30';
-    case 'warning': return 'border-yellow-500 bg-yellow-50 dark:bg-yellow-950/30';
-    case 'info': return 'border-blue-500 bg-blue-50 dark:bg-blue-950/30';
+    case 'critique': return 'border-red-500 bg-red-50 dark:bg-red-950/30';
+    case 'avertissement': return 'border-yellow-500 bg-yellow-50 dark:bg-yellow-950/30';
+    case 'information': return 'border-blue-500 bg-blue-50 dark:bg-blue-950/30';
     default: return '';
   }
 };
 
 const getAlertBadge = (type: AlertItem['type']) => {
   switch (type) {
-    case 'critical': return 'bg-red-500 hover:bg-red-600';
-    case 'warning': return 'bg-yellow-500 hover:bg-yellow-600';
-    case 'info': return 'bg-blue-500 hover:bg-blue-600';
+    case 'critique': return 'bg-red-500 hover:bg-red-600';
+    case 'avertissement': return 'bg-yellow-500 hover:bg-yellow-600';
+    case 'information': return 'bg-blue-500 hover:bg-blue-600';
     default: return '';
   }
 };
@@ -125,8 +125,8 @@ const AlertsPanel = () => {
               <div className="flex items-start">
                 <div className={cn(
                   "p-2 rounded-full mr-3",
-                  alert.type === 'critical' ? 'bg-red-100 text-red-500 dark:bg-red-900 dark:text-red-300' :
-                  alert.type === 'warning' ? 'bg-yellow-100 text-yellow-500 dark:bg-yellow-900 dark:text-yellow-300' :
+                  alert.type === 'critique' ? 'bg-red-100 text-red-500 dark:bg-red-900 dark:text-red-300' :
+                  alert.type === 'avertissement' ? 'bg-yellow-100 text-yellow-500 dark:bg-yellow-900 dark:text-yellow-300' :
                   'bg-blue-100 text-blue-500 dark:bg-blue-900 dark:text-blue-300'
                 )}>
                   {alert.icon}
@@ -154,3 +154,4 @@ const AlertsPanel = () => {
 };
 
 export default AlertsPanel;
+
