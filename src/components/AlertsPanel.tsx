@@ -22,6 +22,10 @@ interface AlertItem {
   read: boolean;
 }
 
+interface AlertsPanelProps {
+  type?: 'critique' | 'avertissement' | 'information';
+}
+
 // Données simulées
 const mockAlerts: AlertItem[] = [
   {
@@ -95,8 +99,12 @@ const getAlertBadge = (type: AlertItem['type']) => {
   }
 };
 
-const AlertsPanel = () => {
-  const unreadCount = mockAlerts.filter(alert => !alert.read).length;
+const AlertsPanel = ({ type }: AlertsPanelProps) => {
+  const filteredAlerts = type 
+    ? mockAlerts.filter(alert => alert.type === type)
+    : mockAlerts;
+    
+  const unreadCount = filteredAlerts.filter(alert => !alert.read).length;
   
   return (
     <Card className="w-full">
@@ -113,40 +121,46 @@ const AlertsPanel = () => {
       </CardHeader>
       <CardContent className="max-h-[400px] overflow-auto">
         <div className="space-y-3">
-          {mockAlerts.map((alert) => (
-            <div 
-              key={alert.id} 
-              className={cn(
-                "p-3 border-l-4 rounded-md relative", 
-                getAlertColor(alert.type),
-                !alert.read && "before:absolute before:top-3 before:left-3 before:w-2 before:h-2 before:bg-blue-500 before:rounded-full"
-              )}
-            >
-              <div className="flex items-start">
-                <div className={cn(
-                  "p-2 rounded-full mr-3",
-                  alert.type === 'critique' ? 'bg-red-100 text-red-500 dark:bg-red-900 dark:text-red-300' :
-                  alert.type === 'avertissement' ? 'bg-yellow-100 text-yellow-500 dark:bg-yellow-900 dark:text-yellow-300' :
-                  'bg-blue-100 text-blue-500 dark:bg-blue-900 dark:text-blue-300'
-                )}>
-                  {alert.icon}
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-medium">{alert.title}</h4>
-                    <Badge variant="outline" className={cn(getAlertBadge(alert.type), "text-white")}>
-                      {alert.type}
-                    </Badge>
+          {filteredAlerts.length > 0 ? (
+            filteredAlerts.map((alert) => (
+              <div 
+                key={alert.id} 
+                className={cn(
+                  "p-3 border-l-4 rounded-md relative", 
+                  getAlertColor(alert.type),
+                  !alert.read && "before:absolute before:top-3 before:left-3 before:w-2 before:h-2 before:bg-blue-500 before:rounded-full"
+                )}
+              >
+                <div className="flex items-start">
+                  <div className={cn(
+                    "p-2 rounded-full mr-3",
+                    alert.type === 'critique' ? 'bg-red-100 text-red-500 dark:bg-red-900 dark:text-red-300' :
+                    alert.type === 'avertissement' ? 'bg-yellow-100 text-yellow-500 dark:bg-yellow-900 dark:text-yellow-300' :
+                    'bg-blue-100 text-blue-500 dark:bg-blue-900 dark:text-blue-300'
+                  )}>
+                    {alert.icon}
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1">{alert.description}</p>
-                  <div className="flex items-center justify-between mt-2 text-xs text-muted-foreground">
-                    <span className="flex items-center"><Clock className="h-3 w-3 mr-1" /> {alert.time}</span>
-                    <span>{alert.system}</span>
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-medium">{alert.title}</h4>
+                      <Badge variant="outline" className={cn(getAlertBadge(alert.type), "text-white")}>
+                        {alert.type}
+                      </Badge>
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">{alert.description}</p>
+                    <div className="flex items-center justify-between mt-2 text-xs text-muted-foreground">
+                      <span className="flex items-center"><Clock className="h-3 w-3 mr-1" /> {alert.time}</span>
+                      <span>{alert.system}</span>
+                    </div>
                   </div>
                 </div>
               </div>
+            ))
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              Aucune alerte à afficher
             </div>
-          ))}
+          )}
         </div>
       </CardContent>
     </Card>
@@ -154,4 +168,3 @@ const AlertsPanel = () => {
 };
 
 export default AlertsPanel;
-
