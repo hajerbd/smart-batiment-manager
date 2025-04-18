@@ -8,13 +8,19 @@ import WelcomePage from "./pages/WelcomePage";
 import Dashboard from "./pages/Dashboard";
 import Alerts from "./pages/Alerts";
 import Energy from "./pages/Energy";
-import NotFound from "./pages/NotFound";
 import Settings from "./pages/Settings";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
 import Profile from "./pages/Profile";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: false,
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -34,13 +40,6 @@ const App = () => (
                 <Route path="/energy" element={<Energy />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/profile" element={<Profile />} />
-                
-                {/* Redirections pour les pages supprimées ou sous-routes */}
-                <Route path="/devices" element={<Navigate to="/dashboard" replace />} />
-                <Route path="/dashboard/*" element={<Navigate to="/dashboard" replace />} />
-                <Route path="/alerts/*" element={<Navigate to="/alerts" replace />} />
-                <Route path="/energy/*" element={<Navigate to="/energy" replace />} />
-                <Route path="/settings/*" element={<Navigate to="/settings" replace />} />
                 
                 {/* Redirection 404 vers la page d'accueil */}
                 <Route path="*" element={<Navigate to="/" replace />} />

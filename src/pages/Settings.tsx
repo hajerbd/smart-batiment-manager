@@ -1,11 +1,12 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,10 +26,115 @@ import {
   User,
   Globe,
   Palette,
-  Volume2
+  Volume2,
+  Loader2,
+  Check
 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { 
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormDescription,
+  FormMessage
+} from "@/components/ui/form";
 
 const Settings = () => {
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: 'Jean Dupont',
+    email: 'jean.dupont@example.com',
+    bio: 'Passionné de domotique et d\'énergie renouvelable',
+    currentPassword: '',
+    newPassword: '',
+  });
+  
+  const [settings, setSettings] = useState({
+    notifications: true,
+    sounds: true,
+    darkMode: false,
+    customTheme: false,
+    language: 'fr',
+    twoFactorAuth: false,
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [id]: value
+    }));
+  };
+
+  const handleToggleChange = (setting: string, value: boolean) => {
+    setSettings(prev => ({
+      ...prev,
+      [setting]: value
+    }));
+    
+    toast({
+      title: "Paramètre modifié",
+      description: `${setting} est maintenant ${value ? 'activé' : 'désactivé'}`
+    });
+  };
+
+  const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSettings(prev => ({
+      ...prev,
+      language: e.target.value
+    }));
+    
+    toast({
+      title: "Langue modifiée",
+      description: "La langue a été changée avec succès"
+    });
+  };
+
+  const handleSaveProfile = () => {
+    setLoading(true);
+    
+    // Simuler une requête API
+    setTimeout(() => {
+      setLoading(false);
+      toast({
+        title: "Profil mis à jour",
+        description: "Vos informations ont été enregistrées avec succès.",
+      });
+    }, 1000);
+  };
+
+  const handleSavePassword = () => {
+    setLoading(true);
+    
+    // Simuler une requête API
+    setTimeout(() => {
+      setLoading(false);
+      
+      if (formData.currentPassword.length < 8) {
+        toast({
+          title: "Erreur",
+          description: "Le mot de passe actuel est incorrect.",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      toast({
+        title: "Mot de passe modifié",
+        description: "Votre mot de passe a été mis à jour avec succès.",
+      });
+      
+      setFormData(prev => ({
+        ...prev,
+        currentPassword: '',
+        newPassword: ''
+      }));
+    }, 1000);
+  };
+
   return (
     <div className="container mx-auto p-6">
       <h1 className="text-3xl font-bold mb-6">Paramètres</h1>
@@ -53,21 +159,49 @@ const Settings = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="name">Nom complet</Label>
-                  <Input id="name" placeholder="John Doe" />
+                  <Input 
+                    id="name" 
+                    value={formData.name} 
+                    onChange={handleInputChange} 
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" placeholder="john@example.com" />
+                  <Input 
+                    id="email" 
+                    type="email" 
+                    value={formData.email} 
+                    onChange={handleInputChange} 
+                  />
                 </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="bio">Bio</Label>
-                <Input id="bio" placeholder="Une courte description de vous" />
-              </div>
-              <div className="flex items-center justify-between pt-4">
-                <Button>Sauvegarder les modifications</Button>
+                <Input 
+                  id="bio" 
+                  value={formData.bio} 
+                  onChange={handleInputChange} 
+                />
               </div>
             </CardContent>
+            <CardFooter>
+              <Button 
+                onClick={handleSaveProfile}
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> 
+                    Sauvegarde...
+                  </>
+                ) : (
+                  <>
+                    <Check className="mr-2 h-4 w-4" />
+                    Sauvegarder les modifications
+                  </>
+                )}
+              </Button>
+            </CardFooter>
           </Card>
         </TabsContent>
 
@@ -85,14 +219,22 @@ const Settings = () => {
                   <Bell className="h-4 w-4" />
                   <Label htmlFor="notifications">Notifications push</Label>
                 </div>
-                <Switch id="notifications" />
+                <Switch 
+                  id="notifications" 
+                  checked={settings.notifications}
+                  onCheckedChange={(checked) => handleToggleChange('notifications', checked)}
+                />
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <Volume2 className="h-4 w-4" />
                   <Label htmlFor="sounds">Sons de notification</Label>
                 </div>
-                <Switch id="sounds" />
+                <Switch 
+                  id="sounds" 
+                  checked={settings.sounds}
+                  onCheckedChange={(checked) => handleToggleChange('sounds', checked)}
+                />
               </div>
             </CardContent>
           </Card>
@@ -112,21 +254,33 @@ const Settings = () => {
                   <Moon className="h-4 w-4" />
                   <Label htmlFor="darkMode">Mode sombre</Label>
                 </div>
-                <Switch id="darkMode" />
+                <Switch 
+                  id="darkMode" 
+                  checked={settings.darkMode}
+                  onCheckedChange={(checked) => handleToggleChange('darkMode', checked)}
+                />
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <Palette className="h-4 w-4" />
                   <Label htmlFor="colorScheme">Thème personnalisé</Label>
                 </div>
-                <Switch id="colorScheme" />
+                <Switch 
+                  id="customTheme" 
+                  checked={settings.customTheme}
+                  onCheckedChange={(checked) => handleToggleChange('customTheme', checked)}
+                />
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <Globe className="h-4 w-4" />
                   <Label htmlFor="language">Langue</Label>
                 </div>
-                <select className="p-2 rounded border">
+                <select 
+                  className="p-2 rounded border"
+                  value={settings.language}
+                  onChange={handleLanguageChange}
+                >
                   <option value="fr">Français</option>
                   <option value="en">English</option>
                   <option value="es">Español</option>
@@ -150,20 +304,49 @@ const Settings = () => {
                   <Shield className="h-4 w-4" />
                   <Label htmlFor="2fa">Authentification à deux facteurs</Label>
                 </div>
-                <Switch id="2fa" />
+                <Switch 
+                  id="2fa" 
+                  checked={settings.twoFactorAuth}
+                  onCheckedChange={(checked) => handleToggleChange('twoFactorAuth', checked)}
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="current-password">Mot de passe actuel</Label>
-                <Input id="current-password" type="password" />
+                <Input 
+                  id="currentPassword" 
+                  type="password"
+                  value={formData.currentPassword}
+                  onChange={handleInputChange}
+                />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="new-password">Nouveau mot de passe</Label>
-                <Input id="new-password" type="password" />
-              </div>
-              <div className="pt-4">
-                <Button>Mettre à jour le mot de passe</Button>
+                <Label htmlFor="newPassword">Nouveau mot de passe</Label>
+                <Input 
+                  id="newPassword" 
+                  type="password"
+                  value={formData.newPassword}
+                  onChange={handleInputChange}
+                />
               </div>
             </CardContent>
+            <CardFooter>
+              <Button 
+                onClick={handleSavePassword}
+                disabled={loading || !formData.currentPassword || !formData.newPassword}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> 
+                    Mise à jour...
+                  </>
+                ) : (
+                  <>
+                    <Check className="mr-2 h-4 w-4" />
+                    Mettre à jour le mot de passe
+                  </>
+                )}
+              </Button>
+            </CardFooter>
           </Card>
         </TabsContent>
       </Tabs>

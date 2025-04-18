@@ -1,14 +1,17 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { 
   Thermometer, 
   Droplet, 
   Snowflake,
-  Clock
+  Clock,
+  Check
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 // Types
 interface AlertItem {
@@ -26,8 +29,8 @@ interface AlertsPanelProps {
   type?: 'critique' | 'avertissement' | 'information';
 }
 
-// Données simulées
-const mockAlerts: AlertItem[] = [
+// Données simulées initiales
+const initialAlerts: AlertItem[] = [
   {
     id: '1',
     type: 'critique',
@@ -100,11 +103,36 @@ const getAlertBadge = (type: AlertItem['type']) => {
 };
 
 const AlertsPanel = ({ type }: AlertsPanelProps) => {
+  const [alerts, setAlerts] = useState<AlertItem[]>(initialAlerts);
+  const { toast } = useToast();
+  
   const filteredAlerts = type 
-    ? mockAlerts.filter(alert => alert.type === type)
-    : mockAlerts;
+    ? alerts.filter(alert => alert.type === type)
+    : alerts;
     
   const unreadCount = filteredAlerts.filter(alert => !alert.read).length;
+  
+  const markAllAsRead = () => {
+    const updatedAlerts = alerts.map(alert => ({
+      ...alert,
+      read: true
+    }));
+    setAlerts(updatedAlerts);
+    toast({
+      title: "Alertes",
+      description: "Toutes les alertes ont été marquées comme lues",
+    });
+  };
+  
+  const markAsRead = (id: string) => {
+    const updatedAlerts = alerts.map(alert => 
+      alert.id === id ? { ...alert, read: true } : alert
+    );
+    setAlerts(updatedAlerts);
+    toast({
+      description: "Alerte marquée comme lue",
+    });
+  };
   
   return (
     <Card className="w-full">
@@ -152,6 +180,18 @@ const AlertsPanel = ({ type }: AlertsPanelProps) => {
                       <span className="flex items-center"><Clock className="h-3 w-3 mr-1" /> {alert.time}</span>
                       <span>{alert.system}</span>
                     </div>
+                    {!alert.read && (
+                      <div className="mt-2">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={() => markAsRead(alert.id)}
+                          className="text-xs flex items-center gap-1"
+                        >
+                          <Check className="h-3 w-3" /> Marquer comme lu
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

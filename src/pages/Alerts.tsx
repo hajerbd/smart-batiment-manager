@@ -1,18 +1,36 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import DashboardHeader from '@/components/DashboardHeader';
 import AlertsPanel from '@/components/AlertsPanel';
 import { Card, CardContent } from '@/components/ui/card';
 import { AlertTriangle, Bell, CheckCircle, FilterX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useToast } from "@/hooks/use-toast";
 
 const Alerts = () => {
+  const { toast } = useToast();
+  const [activeFilter, setActiveFilter] = useState<string>('all');
+  
   const stats = [
     { id: 1, name: 'Alertes critiques', value: '2', icon: <AlertTriangle className="h-5 w-5 text-red-500" />, bgColor: 'bg-red-50 dark:bg-red-900/20' },
     { id: 2, name: 'Avertissements', value: '5', icon: <Bell className="h-5 w-5 text-amber-500" />, bgColor: 'bg-amber-50 dark:bg-amber-900/20' },
     { id: 3, name: 'Infos', value: '12', icon: <CheckCircle className="h-5 w-5 text-blue-500" />, bgColor: 'bg-blue-50 dark:bg-blue-900/20' },
   ];
+
+  const handleMarkAllAsRead = () => {
+    toast({
+      title: "Alertes",
+      description: "Toutes les alertes ont été marquées comme lues",
+    });
+  };
+
+  const handleFilterChange = (filter: string) => {
+    setActiveFilter(filter);
+    toast({
+      description: `Filtres appliqués : ${filter}`,
+    });
+  };
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
@@ -39,14 +57,35 @@ const Alerts = () => {
           {/* Filters and Actions */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
             <div className="flex space-x-2">
-              <Button variant="outline" size="sm" className="flex items-center gap-1">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="flex items-center gap-1"
+                onClick={() => handleFilterChange('all')}
+              >
                 <FilterX className="h-4 w-4" />
                 Filtrer
               </Button>
-              <Button variant="outline" size="sm">Aujourd'hui</Button>
-              <Button variant="outline" size="sm">Cette semaine</Button>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => handleFilterChange('today')}
+              >
+                Aujourd'hui
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => handleFilterChange('week')}
+              >
+                Cette semaine
+              </Button>
             </div>
-            <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+            <Button 
+              size="sm" 
+              className="bg-blue-600 hover:bg-blue-700"
+              onClick={handleMarkAllAsRead}
+            >
               Marquer tout comme lu
             </Button>
           </div>
