@@ -39,10 +39,10 @@ const WelcomePage = () => {
               <Button 
                 onClick={() => navigate('/alerts')}
                 size="lg" 
-                variant="outline"
-                className="border-white text-white hover:bg-white/20 shadow-md"
+                className="bg-blue-700 hover:bg-blue-800 text-white shadow-lg transform transition-transform hover:scale-105"
               >
                 Voir les alertes
+                <Shield className="ml-2" size={18} />
               </Button>
             </div>
           </div>
@@ -124,36 +124,10 @@ const WelcomePage = () => {
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section className="py-16 bg-white dark:bg-slate-900">
-        <div className="container mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-bold text-center mb-12">
-            Ce que disent nos utilisateurs
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <TestimonialCard 
-              quote="VitaSmart a complètement transformé notre façon de gérer notre maison. Tout est désormais automatisé et plus économe en énergie."
-              author="Thomas D."
-              role="Utilisateur depuis 2 ans"
-            />
-            <TestimonialCard 
-              quote="L'interface est intuitive et facile à utiliser. J'apprécie particulièrement les notifications en temps réel en cas d'anomalie."
-              author="Sophie M."
-              role="Nouvelle utilisatrice"
-            />
-            <TestimonialCard 
-              quote="Le support client est réactif et les mises à jour régulières apportent toujours de nouvelles fonctionnalités utiles."
-              author="Laurent P."
-              role="Utilisateur professionnel"
-            />
-          </div>
-        </div>
-      </section>
-
       {/* Footer */}
       <footer className="bg-gray-800 text-white py-8">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
               <h3 className="text-lg font-semibold mb-4">VitaSmart</h3>
               <p className="text-gray-300">La maison intelligente à votre service</p>
@@ -174,14 +148,6 @@ const WelcomePage = () => {
                 <li><a href="#" className="text-gray-300 hover:text-white">Documentation</a></li>
               </ul>
             </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Légal</h3>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-gray-300 hover:text-white">Conditions d'utilisation</a></li>
-                <li><a href="#" className="text-gray-300 hover:text-white">Politique de confidentialité</a></li>
-                <li><a href="#" className="text-gray-300 hover:text-white">Mentions légales</a></li>
-              </ul>
-            </div>
           </div>
           <div className="mt-8 pt-4 border-t border-gray-700 text-center text-gray-400">
             <p>&copy; {new Date().getFullYear()} VitaSmart. Tous droits réservés.</p>
@@ -192,7 +158,7 @@ const WelcomePage = () => {
   );
 };
 
-// Components with improved designs
+// Components
 const FeatureCard = ({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) => (
   <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg transition-all hover:shadow-xl hover:translate-y-[-5px] flex flex-col items-center text-center">
     <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/30 rounded-full">{icon}</div>
@@ -210,21 +176,6 @@ const StepCard = ({ number, title, description, icon }: { number: string, title:
     <p className="text-slate-600 dark:text-slate-300 text-center mb-4">{description}</p>
     <div className="p-3 bg-blue-100 dark:bg-blue-900/50 rounded-full shadow-sm">
       {icon}
-    </div>
-  </div>
-);
-
-const TestimonialCard = ({ quote, author, role }: { quote: string, author: string, role: string }) => (
-  <div className="bg-gray-50 dark:bg-slate-800 p-6 rounded-xl shadow-md border border-gray-100 dark:border-slate-700">
-    <p className="italic text-gray-600 dark:text-gray-300 mb-4">"{quote}"</p>
-    <div className="flex items-center">
-      <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/50 rounded-full flex items-center justify-center font-bold text-blue-600 dark:text-blue-400 mr-3">
-        {author.charAt(0)}
-      </div>
-      <div>
-        <p className="font-semibold">{author}</p>
-        <p className="text-sm text-gray-500 dark:text-gray-400">{role}</p>
-      </div>
     </div>
   </div>
 );
