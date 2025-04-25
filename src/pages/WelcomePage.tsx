@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -18,8 +17,9 @@ const WelcomePage = () => {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-600 via-blue-500 to-violet-600 text-white py-20 md:py-28">
-        <div className="container mx-auto px-4">
+      <section className="relative bg-gradient-to-br from-blue-600/90 via-blue-500/80 to-violet-700/90 text-white py-20 md:py-28 overflow-hidden">
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497604401993-f2e922e5cb0a')] bg-cover bg-center opacity-20 z-0"></div>
+        <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-3xl md:text-5xl font-bold mb-6 animate-fade-in">
               Bienvenue sur VitaSmart
@@ -47,6 +47,7 @@ const WelcomePage = () => {
             </div>
           </div>
         </div>
+        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white/10 to-transparent dark:from-slate-900/10"></div>
       </section>
 
       {/* Features Section */}
