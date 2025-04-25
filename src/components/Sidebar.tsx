@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -11,12 +10,8 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
-  User,
   Menu,
-  FileText,
   HelpCircle,
-  BarChart3,
-  Shield
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -66,7 +61,6 @@ const Sidebar = () => {
   const toggleCollapse = () => setCollapsed(prev => !prev);
   const toggleMobile = () => setMobileOpen(prev => !prev);
 
-  // Liens principaux avec sections
   const mainLinks = [
     { to: '/', icon: <Home size={20} />, label: 'Accueil', section: 'main' },
     { to: '/dashboard', icon: <LayoutDashboard size={20} />, label: 'Tableau de bord', section: 'main' },
@@ -74,19 +68,11 @@ const Sidebar = () => {
     { to: '/energy', icon: <Zap size={20} />, label: 'Énergie', section: 'main' },
   ];
   
-  // Liens secondaires
-  const secondaryLinks = [
-    { to: '/analytics', icon: <BarChart3 size={20} />, label: 'Analytiques', section: 'secondary' },
-    { to: '/security', icon: <Shield size={20} />, label: 'Sécurité', section: 'secondary' },
-    { to: '/documents', icon: <FileText size={20} />, label: 'Documents', section: 'secondary' },
-  ];
-  
   const bottomLinks = [
     { to: '/help', icon: <HelpCircle size={20} />, label: 'Aide', section: 'bottom' },
     { to: '/settings', icon: <Settings size={20} />, label: 'Paramètres', section: 'bottom' },
   ];
 
-  // Mobile sidebar
   if (isMobile) {
     return (
       <>
@@ -169,7 +155,6 @@ const Sidebar = () => {
     );
   }
 
-  // Desktop sidebar
   return (
     <aside className={cn(
       "h-screen sticky top-0 bg-sidebar border-r border-sidebar-border transition-all duration-300",
@@ -190,7 +175,11 @@ const Sidebar = () => {
         
         <nav className="space-y-6 flex-grow">
           <div className="space-y-1">
-            {!collapsed && <p className="text-xs font-medium text-muted-foreground mb-2 px-2">NAVIGATION</p>}
+            {!collapsed && (
+              <p className="text-xs font-medium text-muted-foreground mb-2 px-2">
+                NAVIGATION
+              </p>
+            )}
             {mainLinks.map((link) => (
               <SidebarLink 
                 key={link.to} 
@@ -202,22 +191,6 @@ const Sidebar = () => {
                 badge={link.badge}
               />
             ))}
-          </div>
-          
-          <div>
-            {!collapsed && <p className="text-xs font-medium text-muted-foreground mb-2 px-2">GESTION</p>}
-            <div className="space-y-1">
-              {secondaryLinks.map((link) => (
-                <SidebarLink 
-                  key={link.to} 
-                  to={link.to} 
-                  icon={link.icon} 
-                  label={link.label} 
-                  collapsed={collapsed} 
-                  active={location.pathname === link.to}
-                />
-              ))}
-            </div>
           </div>
           
           <div className="mt-auto space-y-1">

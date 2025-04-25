@@ -12,8 +12,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Check } from 'lucide-react';
+import { Save, User } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Separator } from '@/components/ui/separator';
 
 const Settings = () => {
   const { toast } = useToast();
@@ -42,8 +43,8 @@ const Settings = () => {
     }));
     
     toast({
-      title: "Paramètre modifié",
-      description: `${setting} a été mis à jour`
+      title: "Paramètre mis à jour",
+      description: `Le paramètre a été modifié avec succès.`
     });
   };
 
@@ -55,13 +56,16 @@ const Settings = () => {
   };
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">Paramètres</h1>
+    <div className="container max-w-2xl mx-auto p-6">
+      <div className="flex items-center gap-2 mb-6">
+        <User className="w-8 h-8 text-blue-500" />
+        <h1 className="text-3xl font-bold">Paramètres</h1>
+      </div>
       
       <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Informations du profil</CardTitle>
+        <Card className="shadow-lg">
+          <CardHeader className="pb-4">
+            <CardTitle>Profil</CardTitle>
             <CardDescription>
               Gérez vos informations personnelles
             </CardDescription>
@@ -72,7 +76,8 @@ const Settings = () => {
               <Input 
                 id="name" 
                 value={formData.name} 
-                onChange={handleInputChange} 
+                onChange={handleInputChange}
+                className="transition-all duration-200 focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div className="space-y-2">
@@ -81,39 +86,51 @@ const Settings = () => {
                 id="email" 
                 type="email" 
                 value={formData.email} 
-                onChange={handleInputChange} 
+                onChange={handleInputChange}
+                className="transition-all duration-200 focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </CardContent>
           <CardFooter>
             <Button 
               onClick={handleSaveProfile}
-              className="w-full sm:w-auto"
+              className="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 transition-colors"
             >
-              <Check className="mr-2 h-4 w-4" />
-              Sauvegarder les modifications
+              <Save className="mr-2 h-4 w-4" />
+              Sauvegarder
             </Button>
           </CardFooter>
         </Card>
 
-        <Card>
-          <CardHeader>
+        <Card className="shadow-lg">
+          <CardHeader className="pb-4">
             <CardTitle>Préférences</CardTitle>
             <CardDescription>
-              Gérez vos préférences d'application
+              Personnalisez votre expérience
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
             <div className="flex items-center justify-between">
-              <Label htmlFor="notifications">Notifications</Label>
+              <div className="space-y-0.5">
+                <Label htmlFor="notifications">Notifications</Label>
+                <p className="text-sm text-muted-foreground">
+                  Recevoir des notifications
+                </p>
+              </div>
               <Switch 
                 id="notifications" 
                 checked={settings.notifications}
                 onCheckedChange={() => handleToggleChange('notifications')}
               />
             </div>
+            <Separator />
             <div className="flex items-center justify-between">
-              <Label htmlFor="darkMode">Mode sombre</Label>
+              <div className="space-y-0.5">
+                <Label htmlFor="darkMode">Mode sombre</Label>
+                <p className="text-sm text-muted-foreground">
+                  Activer le thème sombre
+                </p>
+              </div>
               <Switch 
                 id="darkMode" 
                 checked={settings.darkMode}
