@@ -7,11 +7,9 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import WelcomePage from "./pages/WelcomePage";
 import Dashboard from "./pages/Dashboard";
 import Alerts from "./pages/Alerts";
-import Energy from "./pages/Energy";
 import Settings from "./pages/Settings";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
-import Profile from "./pages/Profile";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -37,11 +35,7 @@ const App = () => (
                 <Route path="/" element={<WelcomePage />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/alerts" element={<Alerts />} />
-                <Route path="/energy" element={<Energy />} />
                 <Route path="/settings" element={<Settings />} />
-                <Route path="/profile" element={<Profile />} />
-                
-                {/* Redirection 404 vers la page d'accueil */}
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </main>

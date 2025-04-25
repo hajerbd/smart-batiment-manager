@@ -3,17 +3,10 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { 
-  Thermometer, 
-  Droplet, 
-  Snowflake,
-  Clock,
-  Check
-} from 'lucide-react';
+import { Clock, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 
-// Types
 interface AlertItem {
   id: string;
   type: 'critique' | 'avertissement' | 'information';
@@ -21,15 +14,9 @@ interface AlertItem {
   description: string;
   time: string;
   system: string;
-  icon: React.ReactNode;
   read: boolean;
 }
 
-interface AlertsPanelProps {
-  type?: 'critique' | 'avertissement' | 'information';
-}
-
-// Données simulées initiales
 const initialAlerts: AlertItem[] = [
   {
     id: '1',
@@ -38,7 +25,6 @@ const initialAlerts: AlertItem[] = [
     description: 'La vanne de chauffage dans la Chambre n°1 ne répond plus aux commandes',
     time: 'Il y a 10 min',
     system: 'Chauffage',
-    icon: <Thermometer className="h-5 w-5" />,
     read: false
   },
   {
@@ -48,8 +34,7 @@ const initialAlerts: AlertItem[] = [
     description: 'La vanne d\'irrigation du jardin présente des signes d\'entartrage',
     time: 'Il y a 25 min',
     system: 'Irrigation',
-    icon: <Droplet className="h-5 w-5" />,
-    read: true
+    read: false
   },
   {
     id: '3',
@@ -58,82 +43,37 @@ const initialAlerts: AlertItem[] = [
     description: 'Maintenance du système de chauffage prévue demain à 18h00',
     time: 'Il y a 1h',
     system: 'Chauffage',
-    icon: <Thermometer className="h-5 w-5" />,
     read: false
-  },
-  {
-    id: '4',
-    type: 'avertissement',
-    title: 'Débit d\'eau faible',
-    description: 'Le débit d\'eau dans le système d\'irrigation est inférieur à la normale',
-    time: 'Il y a 1h 30min',
-    system: 'Irrigation',
-    icon: <Droplet className="h-5 w-5" />,
-    read: true
-  },
-  {
-    id: '5',
-    type: 'information',
-    title: 'Vanne de climatisation',
-    description: 'La vanne de climatisation du salon a été remplacée avec succès',
-    time: 'Il y a 2h',
-    system: 'Climatisation',
-    icon: <Snowflake className="h-5 w-5" />,
-    read: true
   }
 ];
 
-// Fonctions utilitaires pour les styles des alertes
-const getAlertColor = (type: AlertItem['type']) => {
-  switch (type) {
-    case 'critique': return 'border-red-500 bg-red-50 dark:bg-red-950/30';
-    case 'avertissement': return 'border-yellow-500 bg-yellow-50 dark:bg-yellow-950/30';
-    case 'information': return 'border-blue-500 bg-blue-50 dark:bg-blue-950/30';
-    default: return '';
-  }
-};
-
-const getAlertBadge = (type: AlertItem['type']) => {
-  switch (type) {
-    case 'critique': return 'bg-red-500 hover:bg-red-600';
-    case 'avertissement': return 'bg-yellow-500 hover:bg-yellow-600';
-    case 'information': return 'bg-blue-500 hover:bg-blue-600';
-    default: return '';
-  }
-};
-
-const AlertsPanel = ({ type }: AlertsPanelProps) => {
+const AlertsPanel = ({ type }: { type?: AlertItem['type'] }) => {
   const [alerts, setAlerts] = useState<AlertItem[]>(initialAlerts);
   const { toast } = useToast();
   
   const filteredAlerts = type 
     ? alerts.filter(alert => alert.type === type)
     : alerts;
-    
+  
   const unreadCount = filteredAlerts.filter(alert => !alert.read).length;
   
-  const markAllAsRead = () => {
-    const updatedAlerts = alerts.map(alert => ({
-      ...alert,
-      read: true
-    }));
-    setAlerts(updatedAlerts);
-    toast({
-      title: "Alertes",
-      description: "Toutes les alertes ont été marquées comme lues",
-    });
-  };
-  
   const markAsRead = (id: string) => {
-    const updatedAlerts = alerts.map(alert => 
+    setAlerts(prev => prev.map(alert => 
       alert.id === id ? { ...alert, read: true } : alert
-    );
-    setAlerts(updatedAlerts);
+    ));
     toast({
       description: "Alerte marquée comme lue",
     });
   };
-  
+
+  const getAlertColor = (type: AlertItem['type']) => {
+    switch (type) {
+      case 'critique': return 'border-red-500 bg-red-50 dark:bg-red-950/30';
+      case 'avertissement': return 'border-yellow-500 bg-yellow-50 dark:bg-yellow-950/30';
+      case 'information': return 'border-blue-500 bg-blue-50 dark:bg-blue-950/30';
+    }
+  };
+
   return (
     <Card className="w-full">
       <CardHeader>
@@ -154,43 +94,39 @@ const AlertsPanel = ({ type }: AlertsPanelProps) => {
               <div 
                 key={alert.id} 
                 className={cn(
-                  "p-3 border-l-4 rounded-md relative", 
+                  "p-3 border-l-4 rounded-md", 
                   getAlertColor(alert.type),
-                  !alert.read && "before:absolute before:top-3 before:left-3 before:w-2 before:h-2 before:bg-blue-500 before:rounded-full"
+                  !alert.read && "relative"
                 )}
               >
-                <div className="flex items-start">
-                  <div className={cn(
-                    "p-2 rounded-full mr-3",
-                    alert.type === 'critique' ? 'bg-red-100 text-red-500 dark:bg-red-900 dark:text-red-300' :
-                    alert.type === 'avertissement' ? 'bg-yellow-100 text-yellow-500 dark:bg-yellow-900 dark:text-yellow-300' :
-                    'bg-blue-100 text-blue-500 dark:bg-blue-900 dark:text-blue-300'
-                  )}>
-                    {alert.icon}
-                  </div>
+                <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
                       <h4 className="font-medium">{alert.title}</h4>
-                      <Badge variant="outline" className={cn(getAlertBadge(alert.type), "text-white")}>
+                      <Badge className={cn(
+                        "text-white",
+                        alert.type === 'critique' ? 'bg-red-500' :
+                        alert.type === 'avertissement' ? 'bg-yellow-500' : 'bg-blue-500'
+                      )}>
                         {alert.type}
                       </Badge>
                     </div>
                     <p className="text-sm text-muted-foreground mt-1">{alert.description}</p>
                     <div className="flex items-center justify-between mt-2 text-xs text-muted-foreground">
-                      <span className="flex items-center"><Clock className="h-3 w-3 mr-1" /> {alert.time}</span>
+                      <span className="flex items-center">
+                        <Clock className="h-3 w-3 mr-1" /> {alert.time}
+                      </span>
                       <span>{alert.system}</span>
                     </div>
                     {!alert.read && (
-                      <div className="mt-2">
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          onClick={() => markAsRead(alert.id)}
-                          className="text-xs flex items-center gap-1"
-                        >
-                          <Check className="h-3 w-3" /> Marquer comme lu
-                        </Button>
-                      </div>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => markAsRead(alert.id)}
+                        className="mt-2 text-xs flex items-center gap-1"
+                      >
+                        <Check className="h-3 w-3" /> Marquer comme lu
+                      </Button>
                     )}
                   </div>
                 </div>
