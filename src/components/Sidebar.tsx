@@ -121,16 +121,6 @@ const Sidebar = () => {
               <div>
                 <p className="text-xs font-medium text-muted-foreground mb-2 px-2">GESTION</p>
                 <div className="space-y-1">
-                  {secondaryLinks.map((link) => (
-                    <SidebarLink 
-                      key={link.to} 
-                      to={link.to} 
-                      icon={link.icon} 
-                      label={link.label} 
-                      collapsed={false} 
-                      active={location.pathname === link.to}
-                    />
-                  ))}
                 </div>
               </div>
               
