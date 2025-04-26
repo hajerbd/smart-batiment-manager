@@ -16,9 +16,9 @@ const WelcomePage = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-blue-600/90 via-blue-500/80 to-violet-700/90 text-white py-20 md:py-28 overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1558002038-1055907df827')] bg-cover bg-center opacity-20 z-0"></div>
+      {/* Hero Section with new background */}
+      <section className="relative bg-gradient-to-br from-blue-500 to-violet-600 text-white py-20 md:py-28 overflow-hidden">
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab')] bg-cover bg-center mix-blend-overlay opacity-20"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-3xl md:text-5xl font-bold mb-6 animate-fade-in">

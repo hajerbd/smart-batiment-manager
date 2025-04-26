@@ -5,13 +5,12 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from '@/hooks/use-toast';
-import { Bell, Moon, Wifi, Volume2 } from 'lucide-react';
+import { Moon, Bell, Shield } from 'lucide-react';
 
 interface SettingsState {
   notifications: boolean;
   darkMode: boolean;
-  autoConnect: boolean;
-  soundEnabled: boolean;
+  security: boolean;
 }
 
 export function PreferencesCard() {
@@ -19,8 +18,7 @@ export function PreferencesCard() {
   const [settings, setSettings] = React.useState<SettingsState>({
     notifications: true,
     darkMode: false,
-    autoConnect: true,
-    soundEnabled: true
+    security: true
   });
 
   const handleToggleChange = (setting: keyof SettingsState) => {
@@ -31,7 +29,7 @@ export function PreferencesCard() {
     
     toast({
       title: "Paramètre mis à jour",
-      description: `Le paramètre a été modifié avec succès.`
+      description: "Les modifications ont été enregistrées."
     });
   };
 
@@ -50,7 +48,7 @@ export function PreferencesCard() {
   }) => (
     <div className="flex items-center justify-between space-x-4">
       <div className="flex items-center space-x-4">
-        <div className={`p-2 rounded-full ${enabled ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-600'}`}>
+        <div className="p-2 rounded-lg bg-gradient-to-br from-blue-100 to-violet-100 text-blue-600">
           <Icon className="h-5 w-5" />
         </div>
         <div className="space-y-1">
@@ -66,24 +64,23 @@ export function PreferencesCard() {
         id={id}
         checked={enabled}
         onCheckedChange={() => handleToggleChange(id)}
-        className="data-[state=checked]:bg-gradient-to-r from-blue-500 to-violet-600"
       />
     </div>
   );
 
   return (
-    <Card className="shadow-lg transition-all hover:shadow-xl mt-6">
-      <CardHeader className="pb-4">
-        <CardTitle className="text-xl font-semibold">Préférences système</CardTitle>
+    <Card className="shadow-sm">
+      <CardHeader>
+        <CardTitle>Paramètres</CardTitle>
         <CardDescription>
-          Personnalisez votre expérience VitaSmart
+          Configurez les paramètres de base de votre application
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <PreferenceItem
           id="notifications"
           title="Notifications"
-          description="Recevoir des alertes et notifications importantes"
+          description="Recevoir des notifications de l'application"
           icon={Bell}
           enabled={settings.notifications}
         />
@@ -91,25 +88,17 @@ export function PreferencesCard() {
         <PreferenceItem
           id="darkMode"
           title="Mode sombre"
-          description="Activer l'interface sombre"
+          description="Activer le thème sombre"
           icon={Moon}
           enabled={settings.darkMode}
         />
         <Separator />
         <PreferenceItem
-          id="autoConnect"
-          title="Connexion automatique"
-          description="Se connecter automatiquement aux appareils connus"
-          icon={Wifi}
-          enabled={settings.autoConnect}
-        />
-        <Separator />
-        <PreferenceItem
-          id="soundEnabled"
-          title="Sons système"
-          description="Activer les sons de notification"
-          icon={Volume2}
-          enabled={settings.soundEnabled}
+          id="security"
+          title="Sécurité"
+          description="Activer les fonctionnalités de sécurité avancées"
+          icon={Shield}
+          enabled={settings.security}
         />
       </CardContent>
     </Card>
