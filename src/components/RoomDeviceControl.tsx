@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -17,7 +16,9 @@ import {
   Calendar,
   CalendarClock,
   CalendarDays,
-  Power
+  Power,
+  ThermometerSnowflake,
+  ThermometerSun
 } from 'lucide-react';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Badge } from '@/components/ui/badge';
@@ -60,6 +61,7 @@ import { useForm } from "react-hook-form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Slider } from "@/components/ui/slider";
 
 // Types
 interface Device {
@@ -78,7 +80,11 @@ interface Device {
     endDate?: Date;
     daysOfWeek?: string[];
     repeat?: boolean;
-  }
+  };
+  temperatureThresholds?: {
+    min?: number;
+    max?: number;
+  };
 }
 
 interface Room {
@@ -102,7 +108,10 @@ const mockRooms: Room[] = [
         status: true,
         icon: <Thermometer className="h-5 w-5" />,
         temperature: '21°C',
-        controlMode: 'manual'
+        controlMode: 'manual',
+        temperatureThresholds: {
+          min: 19
+        }
       },
       {
         id: '12',
@@ -111,7 +120,10 @@ const mockRooms: Room[] = [
         status: false,
         icon: <Snowflake className="h-5 w-5" />,
         temperature: '21°C',
-        controlMode: 'auto'
+        controlMode: 'auto',
+        temperatureThresholds: {
+          max: 24
+        }
       },
       {
         id: '13',
@@ -135,7 +147,10 @@ const mockRooms: Room[] = [
         status: false,
         icon: <Thermometer className="h-5 w-5" />,
         temperature: '19°C',
-        controlMode: 'auto'
+        controlMode: 'auto',
+        temperatureThresholds: {
+          min: 20
+        }
       },
       {
         id: '22',
@@ -144,7 +159,10 @@ const mockRooms: Room[] = [
         status: true,
         icon: <Snowflake className="h-5 w-5" />,
         temperature: '19°C',
-        controlMode: 'manual'
+        controlMode: 'manual',
+        temperatureThresholds: {
+          max: 23
+        }
       },
       {
         id: '23',
@@ -369,6 +387,52 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
     }
   };
   
+  // Nouvelle fonction pour définir les seuils de température
+  const setTemperatureThresholds = (deviceId: string, thresholds: { min?: number; max?: number }) => {
+    const device = selectedRoom.devices.find(d => d.id === deviceId);
+    
+    if (!device || device.controlMode !== 'auto') {
+      toast({
+        title: "Mode automatique requis",
+        description: "Passez l'appareil en mode automatique pour définir les seuils de température.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setRooms(rooms.map(room => 
+      room.id === selectedRoom.id ? {
+        ...room,
+        devices: room.devices.map(device =>
+          device.id === deviceId ? { 
+            ...device, 
+            temperatureThresholds: thresholds,
+            // Activer automatiquement si la température actuelle répond aux critères
+            status: device.type === 'heating' 
+              ? (parseFloat(device.temperature?.replace('°C', '') || '0') < thresholds.min!)
+              : (parseFloat(device.temperature?.replace('°C', '') || '0') > thresholds.max!)
+          } : device
+        )
+      } : room
+    ));
+    
+    // Notification
+    if (device) {
+      let description = '';
+      
+      if (device.type === 'heating' && thresholds.min !== undefined) {
+        description = `Chauffage s'active si température < ${thresholds.min}°C`;
+      } else if (device.type === 'cooling' && thresholds.max !== undefined) {
+        description = `Climatisation s'active si température > ${thresholds.max}°C`;
+      }
+      
+      toast({
+        title: `Seuils de température définis pour ${device.name}`,
+        description,
+      });
+    }
+  };
+  
   return (
     <Card className="w-full">
       <CardHeader className="flex flex-row items-center justify-between">
@@ -455,108 +519,254 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {device.scheduledTime ? (
-                      <Collapsible className="border rounded-lg p-3">
+                    {/* Paramètres spécifiques aux appareils de chauffage/climatisation en mode auto */}
+                    {(device.type === 'heating' || device.type === 'cooling') && (
+                      <Collapsible className="border rounded-lg p-3 mb-3">
                         <CollapsibleTrigger className="flex w-full justify-between items-center">
                           <div className="flex items-center gap-2">
-                            <CalendarClock className="h-4 w-4 text-primary" />
-                            <span className="font-medium text-sm">Programmation actuelle</span>
+                            {device.type === 'heating' ? (
+                              <ThermometerSun className="h-4 w-4 text-amber-500" />
+                            ) : (
+                              <ThermometerSnowflake className="h-4 w-4 text-blue-500" />
+                            )}
+                            <span className="font-medium text-sm">Seuils de température</span>
                           </div>
                           <Button variant="ghost" size="icon" className="h-6 w-6">
-                            <Calendar className="h-4 w-4" />
+                            <Thermometer className="h-4 w-4" />
                           </Button>
                         </CollapsibleTrigger>
-                        <CollapsibleContent className="mt-2">
-                          <div className="text-xs space-y-2 bg-muted/30 rounded-md p-3">
-                            <div className="flex justify-between">
-                              <span>Type de programmation:</span>
-                              <span className="font-medium">
-                                {device.scheduledTime.scheduleType === 'daily' && 'Journalier'}
-                                {device.scheduledTime.scheduleType === 'weekly' && 'Hebdomadaire'}
-                                {device.scheduledTime.scheduleType === 'periodic' && 'Périodique'}
-                              </span>
-                            </div>
-                            
-                            {device.scheduledTime.scheduleType === 'weekly' && device.scheduledTime.daysOfWeek && (
-                              <div className="flex justify-between">
-                                <span>Jours programmés:</span>
-                                <span className="font-medium">{device.scheduledTime.daysOfWeek.join(', ')}</span>
-                              </div>
-                            )}
-                            
-                            {device.scheduledTime.scheduleType === 'periodic' && (
-                              <>
-                                <div className="flex justify-between mt-1">
-                                  <span>Date début:</span>
+                        <CollapsibleContent className="mt-3">
+                          {device.type === 'heating' ? (
+                            <div className="space-y-4">
+                              <div className="space-y-2">
+                                <div className="flex justify-between mb-2">
+                                  <Label htmlFor={`min-temp-${device.id}`}>
+                                    Température minimale (°C)
+                                  </Label>
                                   <span className="font-medium">
-                                    {device.scheduledTime.startDate && format(device.scheduledTime.startDate, 'dd/MM/yyyy')}
+                                    {device.temperatureThresholds?.min || 20}°C
                                   </span>
                                 </div>
-                                <div className="flex justify-between mt-1">
-                                  <span>Date fin:</span>
+                                <Slider
+                                  id={`min-temp-${device.id}`}
+                                  min={15}
+                                  max={25}
+                                  step={0.5}
+                                  value={[device.temperatureThresholds?.min || 20]}
+                                  onValueChange={(value) => {
+                                    setTemperatureThresholds(device.id, { min: value[0] });
+                                  }}
+                                  className="mt-2"
+                                />
+                                <div className="flex justify-between text-xs text-muted-foreground">
+                                  <span>15°C</span>
+                                  <span>25°C</span>
+                                </div>
+                              </div>
+                              
+                              <div className="bg-muted/30 p-3 rounded-md text-sm">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <ThermometerSun className="h-4 w-4 text-amber-500" />
+                                  <span className="font-medium">Fonctionnement:</span>
+                                </div>
+                                <p className="text-xs">
+                                  Le chauffage s'activera automatiquement lorsque la température descend en-dessous de {device.temperatureThresholds?.min || 20}°C.
+                                </p>
+                                {device.status ? (
+                                  <div className="mt-2 text-xs flex items-center gap-1 text-green-500">
+                                    <Power className="h-3 w-3" /> Actuellement actif
+                                  </div>
+                                ) : (
+                                  <div className="mt-2 text-xs flex items-center gap-1 text-gray-500">
+                                    <Power className="h-3 w-3" /> Actuellement inactif
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="space-y-4">
+                              <div className="space-y-2">
+                                <div className="flex justify-between mb-2">
+                                  <Label htmlFor={`max-temp-${device.id}`}>
+                                    Température maximale (°C)
+                                  </Label>
                                   <span className="font-medium">
-                                    {device.scheduledTime.endDate && format(device.scheduledTime.endDate, 'dd/MM/yyyy')}
+                                    {device.temperatureThresholds?.max || 24}°C
                                   </span>
                                 </div>
-                              </>
-                            )}
-                            
-                            <div className="flex justify-between">
-                              <span>Heure début:</span>
-                              <span className="font-medium">{device.scheduledTime.startTime}</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span>Heure fin:</span>
-                              <span className="font-medium">{device.scheduledTime.endTime}</span>
-                            </div>
-                            
-                            {device.scheduledTime.repeat !== undefined && (
-                              <div className="flex justify-between">
-                                <span>Répétition:</span>
-                                <span className="font-medium">{device.scheduledTime.repeat ? 'Activée' : 'Désactivée'}</span>
+                                <Slider
+                                  id={`max-temp-${device.id}`}
+                                  min={20}
+                                  max={30}
+                                  step={0.5}
+                                  value={[device.temperatureThresholds?.max || 24]}
+                                  onValueChange={(value) => {
+                                    setTemperatureThresholds(device.id, { max: value[0] });
+                                  }}
+                                  className="mt-2"
+                                />
+                                <div className="flex justify-between text-xs text-muted-foreground">
+                                  <span>20°C</span>
+                                  <span>30°C</span>
+                                </div>
                               </div>
-                            )}
-                          </div>
-                          
-                          <div className="flex justify-between mt-3">
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => {
-                                setRooms(rooms.map(room => 
-                                  room.id === selectedRoom.id ? {
-                                    ...room,
-                                    devices: room.devices.map(d =>
-                                      d.id === device.id ? { 
-                                        ...d, 
-                                        status: false,
-                                        scheduledTime: undefined
-                                      } : d
-                                    )
-                                  } : room
-                                ));
-                                toast({
-                                  title: `${device.name} désactivé`,
-                                  description: "La programmation a été supprimée",
-                                });
-                              }}
-                              className="text-destructive hover:text-destructive"
-                            >
-                              Annuler
-                            </Button>
-                            
-                            <Dialog>
-                              <DialogTrigger asChild>
+                              
+                              <div className="bg-muted/30 p-3 rounded-md text-sm">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <ThermometerSnowflake className="h-4 w-4 text-blue-500" />
+                                  <span className="font-medium">Fonctionnement:</span>
+                                </div>
+                                <p className="text-xs">
+                                  La climatisation s'activera automatiquement lorsque la température monte au-dessus de {device.temperatureThresholds?.max || 24}°C.
+                                </p>
+                                {device.status ? (
+                                  <div className="mt-2 text-xs flex items-center gap-1 text-green-500">
+                                    <Power className="h-3 w-3" /> Actuellement actif
+                                  </div>
+                                ) : (
+                                  <div className="mt-2 text-xs flex items-center gap-1 text-gray-500">
+                                    <Power className="h-3 w-3" /> Actuellement inactif
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </CollapsibleContent>
+                      </Collapsible>
+                    )}
+
+                    {/* Planification pour les autres appareils (non chauffage/climatisation) */}
+                    {!(device.type === 'heating' || device.type === 'cooling') && (
+                      <>
+                        {device.scheduledTime ? (
+                          <Collapsible className="border rounded-lg p-3">
+                            <CollapsibleTrigger className="flex w-full justify-between items-center">
+                              <div className="flex items-center gap-2">
+                                <CalendarClock className="h-4 w-4 text-primary" />
+                                <span className="font-medium text-sm">Programmation actuelle</span>
+                              </div>
+                              <Button variant="ghost" size="icon" className="h-6 w-6">
+                                <Calendar className="h-4 w-4" />
+                              </Button>
+                            </CollapsibleTrigger>
+                            <CollapsibleContent className="mt-2">
+                              <div className="text-xs space-y-2 bg-muted/30 rounded-md p-3">
+                                <div className="flex justify-between">
+                                  <span>Type de programmation:</span>
+                                  <span className="font-medium">
+                                    {device.scheduledTime.scheduleType === 'daily' && 'Journalier'}
+                                    {device.scheduledTime.scheduleType === 'weekly' && 'Hebdomadaire'}
+                                    {device.scheduledTime.scheduleType === 'periodic' && 'Périodique'}
+                                  </span>
+                                </div>
+                                
+                                {device.scheduledTime.scheduleType === 'weekly' && device.scheduledTime.daysOfWeek && (
+                                  <div className="flex justify-between">
+                                    <span>Jours programmés:</span>
+                                    <span className="font-medium">{device.scheduledTime.daysOfWeek.join(', ')}</span>
+                                  </div>
+                                )}
+                                
+                                {device.scheduledTime.scheduleType === 'periodic' && (
+                                  <>
+                                    <div className="flex justify-between mt-1">
+                                      <span>Date début:</span>
+                                      <span className="font-medium">
+                                        {device.scheduledTime.startDate && format(device.scheduledTime.startDate, 'dd/MM/yyyy')}
+                                      </span>
+                                    </div>
+                                    <div className="flex justify-between mt-1">
+                                      <span>Date fin:</span>
+                                      <span className="font-medium">
+                                        {device.scheduledTime.endDate && format(device.scheduledTime.endDate, 'dd/MM/yyyy')}
+                                      </span>
+                                    </div>
+                                  </>
+                                )}
+                                
+                                <div className="flex justify-between">
+                                  <span>Heure début:</span>
+                                  <span className="font-medium">{device.scheduledTime.startTime}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span>Heure fin:</span>
+                                  <span className="font-medium">{device.scheduledTime.endTime}</span>
+                                </div>
+                                
+                                {device.scheduledTime.repeat !== undefined && (
+                                  <div className="flex justify-between">
+                                    <span>Répétition:</span>
+                                    <span className="font-medium">{device.scheduledTime.repeat ? 'Activée' : 'Désactivée'}</span>
+                                  </div>
+                                )}
+                              </div>
+                              
+                              <div className="flex justify-between mt-3">
                                 <Button 
                                   variant="outline" 
                                   size="sm"
+                                  onClick={() => {
+                                    setRooms(rooms.map(room => 
+                                      room.id === selectedRoom.id ? {
+                                        ...room,
+                                        devices: room.devices.map(d =>
+                                          d.id === device.id ? { 
+                                            ...d, 
+                                            status: false,
+                                            scheduledTime: undefined
+                                          } : d
+                                        )
+                                      } : room
+                                    ));
+                                    toast({
+                                      title: `${device.name} désactivé`,
+                                      description: "La programmation a été supprimée",
+                                    });
+                                  }}
+                                  className="text-destructive hover:text-destructive"
                                 >
-                                  <Clock className="h-3 w-3 mr-1" /> Modifier
+                                  Annuler
+                                </Button>
+                                
+                                <Dialog>
+                                  <DialogTrigger asChild>
+                                    <Button 
+                                      variant="outline" 
+                                      size="sm"
+                                    >
+                                      <Clock className="h-3 w-3 mr-1" /> Modifier
+                                    </Button>
+                                  </DialogTrigger>
+                                  <DialogContent>
+                                    <DialogHeader>
+                                      <DialogTitle>Modifier la programmation - {device.name}</DialogTitle>
+                                      <DialogDescription>
+                                        Définissez le type de programmation et les horaires
+                                      </DialogDescription>
+                                    </DialogHeader>
+                                    
+                                    <AutomaticModeScheduler 
+                                      device={device} 
+                                      onSchedule={(scheduleData) => {
+                                        scheduleDevice(device.id, scheduleData);
+                                      }}
+                                    />
+                                  </DialogContent>
+                                </Dialog>
+                              </div>
+                            </CollapsibleContent>
+                          </Collapsible>
+                        ) : (
+                          <div className="flex justify-center">
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button>
+                                  <Clock className="h-4 w-4 mr-2" /> Programmer
                                 </Button>
                               </DialogTrigger>
                               <DialogContent>
                                 <DialogHeader>
-                                  <DialogTitle>Modifier la programmation - {device.name}</DialogTitle>
+                                  <DialogTitle>Programmation - {device.name}</DialogTitle>
                                   <DialogDescription>
                                     Définissez le type de programmation et les horaires
                                   </DialogDescription>
@@ -571,33 +781,8 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
                               </DialogContent>
                             </Dialog>
                           </div>
-                        </CollapsibleContent>
-                      </Collapsible>
-                    ) : (
-                      <div className="flex justify-center">
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button>
-                              <Clock className="h-4 w-4 mr-2" /> Programmer
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent>
-                            <DialogHeader>
-                              <DialogTitle>Programmation - {device.name}</DialogTitle>
-                              <DialogDescription>
-                                Définissez le type de programmation et les horaires
-                              </DialogDescription>
-                            </DialogHeader>
-                            
-                            <AutomaticModeScheduler 
-                              device={device} 
-                              onSchedule={(scheduleData) => {
-                                scheduleDevice(device.id, scheduleData);
-                              }}
-                            />
-                          </DialogContent>
-                        </Dialog>
-                      </div>
+                        )}
+                      </>
                     )}
                   </div>
                 )}
@@ -614,7 +799,11 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
                     {device.controlMode === 'manual' ? (
                       <><Zap className="h-3 w-3 mr-1" /> Actif</>
                     ) : (
-                      <><Timer className="h-3 w-3 mr-1" /> Programmé</>
+                      <>{(device.type === 'heating' || device.type === 'cooling') ? (
+                        <Thermometer className="h-3 w-3 mr-1" />
+                      ) : (
+                        <Timer className="h-3 w-3 mr-1" />
+                      )} {(device.type === 'heating' || device.type === 'cooling') ? 'Régulation auto' : 'Programmé'}</>
                     )}
                   </Badge>
                 )}
