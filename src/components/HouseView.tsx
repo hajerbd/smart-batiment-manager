@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { 
@@ -8,12 +8,8 @@ import {
   Sofa, 
   ArrowRightCircle,
   Timer, 
-  Zap,
-  ToggleLeft,
-  ToggleRight,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Badge } from '@/components/ui/badge';
 
 interface Room {
   id: string;
@@ -77,41 +73,10 @@ interface HouseViewProps {
 }
 
 const HouseView: React.FC<HouseViewProps> = ({ onSelectRoom }) => {
-  const [controlMode, setControlMode] = useState<'manual' | 'auto'>('manual');
-  
   return (
     <Card className="w-full h-full shadow-xl flex flex-col">
       <CardHeader className="py-2 px-4 flex flex-row items-center justify-between shrink-0">
         <CardTitle className="text-xl font-bold">Plan de la maison</CardTitle>
-        <div className="flex items-center space-x-1 md:space-x-2">
-          <span className="text-sm font-medium">Mode:</span>
-          <Badge 
-            variant="outline" 
-            className={cn(
-              "cursor-pointer transition-colors text-xs py-0.5 px-1.5", // Taille encore plus réduite
-              controlMode === 'manual' 
-                ? "bg-blue-100 text-blue-800 hover:bg-blue-200 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800" 
-                : "bg-gray-100 text-gray-800 hover:bg-gray-200 border-gray-200 dark:bg-gray-900/30 dark:text-gray-400 dark:border-gray-800"
-            )}
-            onClick={() => setControlMode('manual')}
-          >
-            {controlMode === 'manual' ? <ToggleRight className="h-2.5 w-2.5 mr-0.5" /> : <ToggleLeft className="h-2.5 w-2.5 mr-0.5" />}
-            Manuel
-          </Badge>
-          <Badge 
-            variant="outline" 
-            className={cn(
-              "cursor-pointer transition-colors text-xs py-0.5 px-1.5", // Taille encore plus réduite
-              controlMode === 'auto' 
-                ? "bg-green-100 text-green-800 hover:bg-green-200 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800" 
-                : "bg-gray-100 text-gray-800 hover:bg-gray-200 border-gray-200 dark:bg-gray-900/30 dark:text-gray-400 dark:border-gray-800"
-            )}
-            onClick={() => setControlMode('auto')}
-          >
-            {controlMode === 'auto' ? <ToggleRight className="h-2.5 w-2.5 mr-0.5" /> : <ToggleLeft className="h-2.5 w-2.5 mr-0.5" />}
-            Auto
-          </Badge>
-        </div>
       </CardHeader>
       <CardContent className="flex-grow p-0 overflow-hidden">
         <ScrollArea className="h-full w-full">
@@ -140,23 +105,6 @@ const HouseView: React.FC<HouseViewProps> = ({ onSelectRoom }) => {
                     {getRoomIcon(room.type)}
                   </div>
                   <span className="text-xs md:text-sm font-medium">{room.name}</span>
-                  
-                  {/* Indicateur du mode de contrôle */}
-                  <div className="absolute top-0.5 right-0.5 md:top-1 md:right-1">
-                    <Badge variant="outline" className={cn(
-                      "text-[0.6rem] py-0 px-0.5",
-                      controlMode === 'manual' 
-                        ? "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400" 
-                        : "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-400"
-                    )}>
-                      {controlMode === 'manual' ? (
-                        <Zap className="h-2 w-2 mr-0.5" />
-                      ) : (
-                        <Timer className="h-2 w-2 mr-0.5" />
-                      )}
-                      <span className="text-[0.6rem]">{controlMode === 'manual' ? 'M' : 'A'}</span>
-                    </Badge>
-                  </div>
                 </div>
               ))}
             </div>

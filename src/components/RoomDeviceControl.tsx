@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -56,6 +55,7 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 // Types
 interface Device {
@@ -65,6 +65,7 @@ interface Device {
   status: boolean;
   icon: React.ReactNode;
   temperature?: string;
+  controlMode: 'manual' | 'auto';
   scheduledTime?: {
     startTime: string;
     endTime: string;
@@ -82,7 +83,7 @@ interface Room {
   devices: Device[];
 }
 
-// Données simulées
+// Données simulées avec le mode de contrôle par équipement
 const mockRooms: Room[] = [
   {
     id: '1',
@@ -95,7 +96,8 @@ const mockRooms: Room[] = [
         type: 'heating',
         status: true,
         icon: <Thermometer className="h-5 w-5" />,
-        temperature: '21°C'
+        temperature: '21°C',
+        controlMode: 'manual'
       },
       {
         id: '12',
@@ -103,14 +105,16 @@ const mockRooms: Room[] = [
         type: 'cooling',
         status: false,
         icon: <Snowflake className="h-5 w-5" />,
-        temperature: '21°C'
+        temperature: '21°C',
+        controlMode: 'auto'
       },
       {
         id: '13',
         name: 'Stores automatiques',
         type: 'blinds',
         status: true,
-        icon: <Blinds className="h-5 w-5" />
+        icon: <Blinds className="h-5 w-5" />,
+        controlMode: 'manual'
       }
     ]
   },
@@ -125,7 +129,8 @@ const mockRooms: Room[] = [
         type: 'heating',
         status: false,
         icon: <Thermometer className="h-5 w-5" />,
-        temperature: '19°C'
+        temperature: '19°C',
+        controlMode: 'auto'
       },
       {
         id: '22',
@@ -133,14 +138,16 @@ const mockRooms: Room[] = [
         type: 'cooling',
         status: true,
         icon: <Snowflake className="h-5 w-5" />,
-        temperature: '19°C'
+        temperature: '19°C',
+        controlMode: 'manual'
       },
       {
         id: '23',
         name: 'Stores automatiques',
         type: 'blinds',
         status: false,
-        icon: <Blinds className="h-5 w-5" />
+        icon: <Blinds className="h-5 w-5" />,
+        controlMode: 'auto'
       }
     ]
   },
@@ -155,7 +162,8 @@ const mockRooms: Room[] = [
         type: 'heating',
         status: true,
         icon: <Thermometer className="h-5 w-5" />,
-        temperature: '20°C'
+        temperature: '20°C',
+        controlMode: 'manual'
       },
       {
         id: '32',
@@ -163,14 +171,16 @@ const mockRooms: Room[] = [
         type: 'cooling',
         status: false,
         icon: <Snowflake className="h-5 w-5" />,
-        temperature: '20°C'
+        temperature: '20°C',
+        controlMode: 'auto'
       },
       {
         id: '33',
         name: 'Stores automatiques',
         type: 'blinds',
         status: true,
-        icon: <Blinds className="h-5 w-5" />
+        icon: <Blinds className="h-5 w-5" />,
+        controlMode: 'manual'
       }
     ]
   },
@@ -184,7 +194,8 @@ const mockRooms: Room[] = [
         name: 'Lumière principale',
         type: 'lighting',
         status: true,
-        icon: <Lamp className="h-5 w-5" />
+        icon: <Lamp className="h-5 w-5" />,
+        controlMode: 'manual'
       }
     ]
   },
@@ -198,7 +209,8 @@ const mockRooms: Room[] = [
         name: 'Vannes d\'irrigation',
         type: 'irrigation',
         status: false,
-        icon: <Droplet className="h-5 w-5" />
+        icon: <Droplet className="h-5 w-5" />,
+        controlMode: 'auto'
       }
     ]
   }
@@ -211,8 +223,6 @@ interface RoomDeviceControlProps {
 
 const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack }) => {
   const [rooms, setRooms] = useState<Room[]>(mockRooms);
-  const [controlMode, setControlMode] = useState<'manual' | 'auto'>('manual');
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   
   // Trouver la chambre sélectionnée
   const selectedRoom = rooms.find(room => room.id === roomId);
@@ -232,10 +242,12 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
   
   // Fonction pour basculer l'état d'un appareil en mode manuel
   const toggleDevice = (deviceId: string) => {
-    if (controlMode !== 'manual') {
+    const device = selectedRoom.devices.find(d => d.id === deviceId);
+    
+    if (!device || device.controlMode !== 'manual') {
       toast({
         title: "Mode manuel requis",
-        description: "Passez en mode manuel pour activer/désactiver directement les appareils.",
+        description: "Passez l'appareil en mode manuel pour l'activer/désactiver directement.",
         variant: "destructive"
       });
       return;
@@ -256,11 +268,38 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
     ));
     
     // Notification
+    const updatedDevice = selectedRoom.devices.find(d => d.id === deviceId);
+    if (updatedDevice) {
+      toast({
+        title: updatedDevice.status ? `${updatedDevice.name} désactivé` : `${updatedDevice.name} activé`,
+        description: updatedDevice.status ? "L'appareil a été éteint" : "L'appareil a été allumé",
+      });
+    }
+  };
+
+  // Fonction pour changer le mode de contrôle d'un appareil
+  const toggleDeviceControlMode = (deviceId: string) => {
+    setRooms(rooms.map(room => 
+      room.id === selectedRoom.id ? {
+        ...room,
+        devices: room.devices.map(device =>
+          device.id === deviceId ? { 
+            ...device, 
+            controlMode: device.controlMode === 'manual' ? 'auto' : 'manual',
+            // Reset scheduled time if switching to manual
+            scheduledTime: device.controlMode === 'auto' ? undefined : device.scheduledTime
+          } : device
+        )
+      } : room
+    ));
+    
+    // Notification
     const device = selectedRoom.devices.find(d => d.id === deviceId);
     if (device) {
+      const newMode = device.controlMode === 'manual' ? 'automatique' : 'manuel';
       toast({
-        title: device.status ? `${device.name} désactivé` : `${device.name} activé`,
-        description: device.status ? "L'appareil a été éteint" : "L'appareil a été allumé",
+        title: `${device.name} - Mode ${newMode}`,
+        description: `L'appareil est maintenant en mode ${newMode}`,
       });
     }
   };
@@ -274,10 +313,12 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
     endDate?: Date;
     dayOfWeek?: string;
   }) => {
-    if (controlMode !== 'auto') {
+    const device = selectedRoom.devices.find(d => d.id === deviceId);
+    
+    if (!device || device.controlMode !== 'auto') {
       toast({
         title: "Mode automatique requis",
-        description: "Passez en mode automatique pour programmer les appareils.",
+        description: "Passez l'appareil en mode automatique pour le programmer.",
         variant: "destructive"
       });
       return;
@@ -304,7 +345,6 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
     ));
     
     // Notification
-    const device = selectedRoom.devices.find(d => d.id === deviceId);
     if (device) {
       let description = '';
       
@@ -323,20 +363,6 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
     }
   };
   
-  // Gérer le changement de mode
-  const handleModeChange = (value: string) => {
-    if (value) {
-      setControlMode(value as 'manual' | 'auto');
-      
-      toast({
-        title: `Mode ${value === 'manual' ? 'manuel' : 'automatique'} activé`,
-        description: value === 'manual' 
-          ? "Vous pouvez maintenant activer ou désactiver directement les appareils."
-          : "Vous pouvez maintenant programmer les appareils pour qu'ils fonctionnent automatiquement.",
-      });
-    }
-  };
-  
   return (
     <Card className="w-full">
       <CardHeader className="flex flex-row items-center justify-between">
@@ -346,16 +372,6 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
           </Button>
           <CardTitle>{selectedRoom.name}</CardTitle>
         </div>
-        <ToggleGroup type="single" value={controlMode} onValueChange={handleModeChange}>
-          <ToggleGroupItem value="manual" aria-label="Manuel" className="flex items-center gap-1">
-            <Zap className="h-4 w-4" />
-            <span className="hidden sm:inline">Manuel</span>
-          </ToggleGroupItem>
-          <ToggleGroupItem value="auto" aria-label="Automatique" className="flex items-center gap-1">
-            <Timer className="h-4 w-4" />
-            <span className="hidden sm:inline">Automatique</span>
-          </ToggleGroupItem>
-        </ToggleGroup>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -385,39 +401,52 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
                   </div>
                 </div>
                 
-                {/* Contrôle différent selon le mode */}
-                {controlMode === 'manual' ? (
-                  <Switch
-                    checked={device.status}
-                    onCheckedChange={() => toggleDevice(device.id)}
-                  />
-                ) : (
-                  <div className="flex flex-col items-end gap-2">
-                    {device.scheduledTime ? (
-                      <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-400">
-                        <Timer className="h-3 w-3 mr-1" /> Programmé
-                      </Badge>
-                    ) : (
-                      <Badge variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400">
-                        Non programmé
-                      </Badge>
-                    )}
-                  </div>
-                )}
+                {/* Mode de contrôle par appareil */}
+                <div>
+                  <ToggleGroup 
+                    type="single" 
+                    value={device.controlMode} 
+                    size="sm"
+                    className="border rounded-md"
+                    onValueChange={(value) => {
+                      if (value) toggleDeviceControlMode(device.id);
+                    }}
+                  >
+                    <ToggleGroupItem value="manual" aria-label="Manuel" className="flex items-center gap-1 text-xs px-2 py-1">
+                      <Zap className="h-3 w-3" />
+                      <span className="hidden sm:inline">M</span>
+                    </ToggleGroupItem>
+                    <ToggleGroupItem value="auto" aria-label="Automatique" className="flex items-center gap-1 text-xs px-2 py-1">
+                      <Timer className="h-3 w-3" />
+                      <span className="hidden sm:inline">A</span>
+                    </ToggleGroupItem>
+                  </ToggleGroup>
+                </div>
               </div>
               
-              {/* Affichage d'état et options selon le mode */}
-              <div className="space-y-3">
-                {controlMode === 'manual' ? (
-                  /* Mode manuel - afficher simplement l'état actif/inactif */
-                  device.status && (
-                    <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400">
-                      <Zap className="h-3 w-3 mr-1" /> Actif
-                    </Badge>
-                  )
-                ) : (
-                  /* Mode automatique - afficher la programmation ou option de programmer */
-                  <div className="space-y-3 mt-2">
+              {/* Contenus différents selon le mode de l'appareil */}
+              <div className="mt-4">
+                <Tabs defaultValue={device.controlMode} className="w-full">
+                  {/* Onglet Mode Manuel */}
+                  <TabsContent value="manual" className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium">État actuel</span>
+                      <Switch
+                        checked={device.status}
+                        onCheckedChange={() => toggleDevice(device.id)}
+                        disabled={device.controlMode !== 'manual'}
+                      />
+                    </div>
+                    <div className="text-center text-sm text-muted-foreground">
+                      {device.controlMode !== 'manual' ? 
+                        "Pour contrôler manuellement, activez le mode manuel" : 
+                        device.status ? "Appareil activé" : "Appareil désactivé"
+                      }
+                    </div>
+                  </TabsContent>
+                  
+                  {/* Onglet Mode Automatique */}
+                  <TabsContent value="auto" className="space-y-4">
                     {device.scheduledTime ? (
                       <>
                         <div className="text-xs text-muted-foreground mt-2">
@@ -485,13 +514,18 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
                               });
                             }}
                             className="text-destructive hover:text-destructive"
+                            disabled={device.controlMode !== 'auto'}
                           >
                             Annuler
                           </Button>
                           
                           <Dialog>
                             <DialogTrigger asChild>
-                              <Button variant="outline" size="sm">
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                disabled={device.controlMode !== 'auto'}
+                              >
                                 <Clock className="h-3 w-3 mr-1" /> Modifier
                               </Button>
                             </DialogTrigger>
@@ -517,7 +551,7 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
                       <div className="flex justify-center">
                         <Dialog>
                           <DialogTrigger asChild>
-                            <Button>
+                            <Button disabled={device.controlMode !== 'auto'}>
                               <Clock className="h-4 w-4 mr-2" /> Programmer
                             </Button>
                           </DialogTrigger>
@@ -539,7 +573,24 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
                         </Dialog>
                       </div>
                     )}
-                  </div>
+                  </TabsContent>
+                </Tabs>
+              </div>
+              
+              {/* Status indicator */}
+              <div className="mt-3">
+                {device.status && (
+                  <Badge variant="outline" className={cn(
+                    device.controlMode === 'manual'
+                      ? "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400"
+                      : "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-400"
+                  )}>
+                    {device.controlMode === 'manual' ? (
+                      <><Zap className="h-3 w-3 mr-1" /> Actif</>
+                    ) : (
+                      <><Timer className="h-3 w-3 mr-1" /> Programmé</>
+                    )}
+                  </Badge>
                 )}
               </div>
             </div>
