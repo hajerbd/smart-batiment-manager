@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,7 +16,8 @@ import {
   Timer,
   Calendar,
   CalendarClock,
-  CalendarDays
+  CalendarDays,
+  Power
 } from 'lucide-react';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Badge } from '@/components/ui/badge';
@@ -56,6 +58,8 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Checkbox } from "@/components/ui/checkbox";
 
 // Types
 interface Device {
@@ -69,10 +73,11 @@ interface Device {
   scheduledTime?: {
     startTime: string;
     endTime: string;
-    scheduleType?: 'daily' | 'periodic';
+    scheduleType?: 'daily' | 'periodic' | 'weekly';
     startDate?: Date;
     endDate?: Date;
-    dayOfWeek?: string;
+    daysOfWeek?: string[];
+    repeat?: boolean;
   }
 }
 
@@ -308,10 +313,11 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
   const scheduleDevice = (deviceId: string, scheduleData: {
     startTime: string;
     endTime: string;
-    scheduleType: 'daily' | 'periodic';
+    scheduleType: 'daily' | 'periodic' | 'weekly';
     startDate?: Date;
     endDate?: Date;
-    dayOfWeek?: string;
+    daysOfWeek?: string[];
+    repeat?: boolean;
   }) => {
     const device = selectedRoom.devices.find(d => d.id === deviceId);
     
@@ -330,14 +336,7 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
         devices: room.devices.map(device =>
           device.id === deviceId ? { 
             ...device, 
-            scheduledTime: {
-              startTime: scheduleData.startTime,
-              endTime: scheduleData.endTime,
-              scheduleType: scheduleData.scheduleType,
-              startDate: scheduleData.startDate,
-              endDate: scheduleData.endDate,
-              dayOfWeek: scheduleData.dayOfWeek
-            },
+            scheduledTime: scheduleData,
             status: true // Activer l'appareil quand programmé
           } : device
         )
@@ -349,11 +348,18 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
       let description = '';
       
       if (scheduleData.scheduleType === 'daily') {
-        description = `Programmé quotidiennement ${scheduleData.dayOfWeek ? `le ${scheduleData.dayOfWeek}` : ''} de ${scheduleData.startTime} à ${scheduleData.endTime}`;
+        description = `Programmé quotidiennement de ${scheduleData.startTime} à ${scheduleData.endTime}`;
+      } else if (scheduleData.scheduleType === 'weekly') {
+        const days = scheduleData.daysOfWeek ? scheduleData.daysOfWeek.join(', ') : 'aucun jour spécifié';
+        description = `Programmé chaque semaine (${days}) de ${scheduleData.startTime} à ${scheduleData.endTime}`;
       } else {
         const startDateStr = scheduleData.startDate ? format(scheduleData.startDate, 'dd/MM/yyyy') : '?';
         const endDateStr = scheduleData.endDate ? format(scheduleData.endDate, 'dd/MM/yyyy') : '?';
         description = `Programmé du ${startDateStr} au ${endDateStr} de ${scheduleData.startTime} à ${scheduleData.endTime}`;
+      }
+
+      if (scheduleData.repeat) {
+        description += ' (répétition activée)';
       }
       
       toast({
@@ -426,132 +432,152 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
               
               {/* Contenus différents selon le mode de l'appareil */}
               <div className="mt-4">
-                <Tabs defaultValue={device.controlMode} className="w-full">
-                  {/* Onglet Mode Manuel */}
-                  <TabsContent value="manual" className="space-y-4">
+                {device.controlMode === 'manual' ? (
+                  <div className="space-y-4">
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-medium">État actuel</span>
                       <Switch
                         checked={device.status}
                         onCheckedChange={() => toggleDevice(device.id)}
-                        disabled={device.controlMode !== 'manual'}
                       />
                     </div>
                     <div className="text-center text-sm text-muted-foreground">
-                      {device.controlMode !== 'manual' ? 
-                        "Pour contrôler manuellement, activez le mode manuel" : 
-                        device.status ? "Appareil activé" : "Appareil désactivé"
-                      }
+                      {device.status ? (
+                        <div className="flex items-center justify-center gap-2">
+                          <Power className="h-4 w-4 text-green-500" /> Appareil activé
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-center gap-2">
+                          <Power className="h-4 w-4 text-gray-400" /> Appareil désactivé
+                        </div>
+                      )}
                     </div>
-                  </TabsContent>
-                  
-                  {/* Onglet Mode Automatique */}
-                  <TabsContent value="auto" className="space-y-4">
+                  </div>
+                ) : (
+                  <div className="space-y-4">
                     {device.scheduledTime ? (
-                      <>
-                        <div className="text-xs text-muted-foreground mt-2">
-                          <div className="flex justify-between">
-                            <span>Type de programmation:</span>
-                            <span className="font-medium">
-                              {device.scheduledTime.scheduleType === 'daily' ? 'Journalier' : 'Périodique'}
-                            </span>
+                      <Collapsible className="border rounded-lg p-3">
+                        <CollapsibleTrigger className="flex w-full justify-between items-center">
+                          <div className="flex items-center gap-2">
+                            <CalendarClock className="h-4 w-4 text-primary" />
+                            <span className="font-medium text-sm">Programmation actuelle</span>
                           </div>
-                          
-                          {device.scheduledTime.scheduleType === 'daily' && device.scheduledTime.dayOfWeek && (
-                            <div className="flex justify-between mt-1">
-                              <span>Jour programmé:</span>
-                              <span className="font-medium">{device.scheduledTime.dayOfWeek}</span>
-                            </div>
-                          )}
-                          
-                          {device.scheduledTime.scheduleType === 'periodic' && (
-                            <>
-                              <div className="flex justify-between mt-1">
-                                <span>Date début:</span>
-                                <span className="font-medium">
-                                  {device.scheduledTime.startDate && format(device.scheduledTime.startDate, 'dd/MM/yyyy')}
-                                </span>
-                              </div>
-                              <div className="flex justify-between mt-1">
-                                <span>Date fin:</span>
-                                <span className="font-medium">
-                                  {device.scheduledTime.endDate && format(device.scheduledTime.endDate, 'dd/MM/yyyy')}
-                                </span>
-                              </div>
-                            </>
-                          )}
-                          
-                          <div className="flex justify-between mt-1">
-                            <span>Heure début:</span>
-                            <span className="font-medium">{device.scheduledTime.startTime}</span>
-                          </div>
-                          <div className="flex justify-between mt-1">
-                            <span>Heure fin:</span>
-                            <span className="font-medium">{device.scheduledTime.endTime}</span>
-                          </div>
-                        </div>
-                        
-                        <div className="flex justify-between">
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => {
-                              setRooms(rooms.map(room => 
-                                room.id === selectedRoom.id ? {
-                                  ...room,
-                                  devices: room.devices.map(d =>
-                                    d.id === device.id ? { 
-                                      ...d, 
-                                      status: false,
-                                      scheduledTime: undefined
-                                    } : d
-                                  )
-                                } : room
-                              ));
-                              toast({
-                                title: `${device.name} désactivé`,
-                                description: "La programmation a été supprimée",
-                              });
-                            }}
-                            className="text-destructive hover:text-destructive"
-                            disabled={device.controlMode !== 'auto'}
-                          >
-                            Annuler
+                          <Button variant="ghost" size="icon" className="h-6 w-6">
+                            <Calendar className="h-4 w-4" />
                           </Button>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="mt-2">
+                          <div className="text-xs space-y-2 bg-muted/30 rounded-md p-3">
+                            <div className="flex justify-between">
+                              <span>Type de programmation:</span>
+                              <span className="font-medium">
+                                {device.scheduledTime.scheduleType === 'daily' && 'Journalier'}
+                                {device.scheduledTime.scheduleType === 'weekly' && 'Hebdomadaire'}
+                                {device.scheduledTime.scheduleType === 'periodic' && 'Périodique'}
+                              </span>
+                            </div>
+                            
+                            {device.scheduledTime.scheduleType === 'weekly' && device.scheduledTime.daysOfWeek && (
+                              <div className="flex justify-between">
+                                <span>Jours programmés:</span>
+                                <span className="font-medium">{device.scheduledTime.daysOfWeek.join(', ')}</span>
+                              </div>
+                            )}
+                            
+                            {device.scheduledTime.scheduleType === 'periodic' && (
+                              <>
+                                <div className="flex justify-between mt-1">
+                                  <span>Date début:</span>
+                                  <span className="font-medium">
+                                    {device.scheduledTime.startDate && format(device.scheduledTime.startDate, 'dd/MM/yyyy')}
+                                  </span>
+                                </div>
+                                <div className="flex justify-between mt-1">
+                                  <span>Date fin:</span>
+                                  <span className="font-medium">
+                                    {device.scheduledTime.endDate && format(device.scheduledTime.endDate, 'dd/MM/yyyy')}
+                                  </span>
+                                </div>
+                              </>
+                            )}
+                            
+                            <div className="flex justify-between">
+                              <span>Heure début:</span>
+                              <span className="font-medium">{device.scheduledTime.startTime}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Heure fin:</span>
+                              <span className="font-medium">{device.scheduledTime.endTime}</span>
+                            </div>
+                            
+                            {device.scheduledTime.repeat !== undefined && (
+                              <div className="flex justify-between">
+                                <span>Répétition:</span>
+                                <span className="font-medium">{device.scheduledTime.repeat ? 'Activée' : 'Désactivée'}</span>
+                              </div>
+                            )}
+                          </div>
                           
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <Button 
-                                variant="outline" 
-                                size="sm"
-                                disabled={device.controlMode !== 'auto'}
-                              >
-                                <Clock className="h-3 w-3 mr-1" /> Modifier
-                              </Button>
-                            </DialogTrigger>
-                            <DialogContent>
-                              <DialogHeader>
-                                <DialogTitle>Modifier la programmation - {device.name}</DialogTitle>
-                                <DialogDescription>
-                                  Définissez le type de programmation et les heures
-                                </DialogDescription>
-                              </DialogHeader>
-                              
-                              <AutomaticModeScheduler 
-                                device={device} 
-                                onSchedule={(scheduleData) => {
-                                  scheduleDevice(device.id, scheduleData);
-                                }}
-                              />
-                            </DialogContent>
-                          </Dialog>
-                        </div>
-                      </>
+                          <div className="flex justify-between mt-3">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => {
+                                setRooms(rooms.map(room => 
+                                  room.id === selectedRoom.id ? {
+                                    ...room,
+                                    devices: room.devices.map(d =>
+                                      d.id === device.id ? { 
+                                        ...d, 
+                                        status: false,
+                                        scheduledTime: undefined
+                                      } : d
+                                    )
+                                  } : room
+                                ));
+                                toast({
+                                  title: `${device.name} désactivé`,
+                                  description: "La programmation a été supprimée",
+                                });
+                              }}
+                              className="text-destructive hover:text-destructive"
+                            >
+                              Annuler
+                            </Button>
+                            
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button 
+                                  variant="outline" 
+                                  size="sm"
+                                >
+                                  <Clock className="h-3 w-3 mr-1" /> Modifier
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>Modifier la programmation - {device.name}</DialogTitle>
+                                  <DialogDescription>
+                                    Définissez le type de programmation et les horaires
+                                  </DialogDescription>
+                                </DialogHeader>
+                                
+                                <AutomaticModeScheduler 
+                                  device={device} 
+                                  onSchedule={(scheduleData) => {
+                                    scheduleDevice(device.id, scheduleData);
+                                  }}
+                                />
+                              </DialogContent>
+                            </Dialog>
+                          </div>
+                        </CollapsibleContent>
+                      </Collapsible>
                     ) : (
                       <div className="flex justify-center">
                         <Dialog>
                           <DialogTrigger asChild>
-                            <Button disabled={device.controlMode !== 'auto'}>
+                            <Button>
                               <Clock className="h-4 w-4 mr-2" /> Programmer
                             </Button>
                           </DialogTrigger>
@@ -559,7 +585,7 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
                             <DialogHeader>
                               <DialogTitle>Programmation - {device.name}</DialogTitle>
                               <DialogDescription>
-                                Définissez le type de programmation et les heures
+                                Définissez le type de programmation et les horaires
                               </DialogDescription>
                             </DialogHeader>
                             
@@ -573,8 +599,8 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
                         </Dialog>
                       </div>
                     )}
-                  </TabsContent>
-                </Tabs>
+                  </div>
+                )}
               </div>
               
               {/* Status indicator */}
@@ -607,25 +633,42 @@ interface AutomaticModeSchedulerProps {
   onSchedule: (scheduleData: {
     startTime: string;
     endTime: string;
-    scheduleType: 'daily' | 'periodic';
+    scheduleType: 'daily' | 'periodic' | 'weekly';
     startDate?: Date;
     endDate?: Date;
-    dayOfWeek?: string;
+    daysOfWeek?: string[];
+    repeat?: boolean;
   }) => void;
 }
 
 const AutomaticModeScheduler: React.FC<AutomaticModeSchedulerProps> = ({ device, onSchedule }) => {
-  const [scheduleType, setScheduleType] = useState<'daily' | 'periodic'>(device.scheduledTime?.scheduleType || 'daily');
+  const [scheduleType, setScheduleType] = useState<'daily' | 'periodic' | 'weekly'>(
+    device.scheduledTime?.scheduleType || 'daily'
+  );
   const [startTime, setStartTime] = useState(device.scheduledTime?.startTime || "08:00");
   const [endTime, setEndTime] = useState(device.scheduledTime?.endTime || "18:00");
   const [startDate, setStartDate] = useState<Date | undefined>(device.scheduledTime?.startDate || new Date());
   const [endDate, setEndDate] = useState<Date | undefined>(device.scheduledTime?.endDate || new Date());
-  const [dayOfWeek, setDayOfWeek] = useState(device.scheduledTime?.dayOfWeek || 'Lundi');
+  const [repeat, setRepeat] = useState<boolean>(device.scheduledTime?.repeat || false);
+  
+  // Jours de la semaine pour le mode hebdomadaire
+  const [selectedDays, setSelectedDays] = useState<string[]>(
+    device.scheduledTime?.daysOfWeek || ['Lundi']
+  );
+  
+  const weekDays = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+  
+  const toggleDay = (day: string) => {
+    if (selectedDays.includes(day)) {
+      setSelectedDays(selectedDays.filter(d => d !== day));
+    } else {
+      setSelectedDays([...selectedDays, day]);
+    }
+  };
 
   const form = useForm({
     defaultValues: {
       scheduleType: device.scheduledTime?.scheduleType || 'daily',
-      dayOfWeek: device.scheduledTime?.dayOfWeek || 'Lundi',
     }
   });
 
@@ -654,19 +697,25 @@ const AutomaticModeScheduler: React.FC<AutomaticModeSchedulerProps> = ({ device,
                 <FormControl>
                   <RadioGroup 
                     value={scheduleType} 
-                    onValueChange={(value) => setScheduleType(value as 'daily' | 'periodic')}
+                    onValueChange={(value) => setScheduleType(value as 'daily' | 'periodic' | 'weekly')}
                     className="flex flex-col space-y-1"
                   >
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="daily" id="daily" />
                       <Label htmlFor="daily" className="flex items-center">
-                        <CalendarClock className="h-4 w-4 mr-2" /> Journalier
+                        <CalendarClock className="h-4 w-4 mr-2" /> Journalier (tous les jours)
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="weekly" id="weekly" />
+                      <Label htmlFor="weekly" className="flex items-center">
+                        <CalendarDays className="h-4 w-4 mr-2" /> Hebdomadaire (jours spécifiques)
                       </Label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="periodic" id="periodic" />
                       <Label htmlFor="periodic" className="flex items-center">
-                        <CalendarDays className="h-4 w-4 mr-2" /> Périodique
+                        <Calendar className="h-4 w-4 mr-2" /> Périodique (période spécifique)
                       </Label>
                     </div>
                   </RadioGroup>
@@ -675,35 +724,24 @@ const AutomaticModeScheduler: React.FC<AutomaticModeSchedulerProps> = ({ device,
             )}
           />
 
-          {scheduleType === 'daily' && (
-            <div className="space-y-2">
-              <FormField
-                control={form.control}
-                name="dayOfWeek"
-                render={() => (
-                  <FormItem>
-                    <FormLabel>Jour de la semaine</FormLabel>
-                    <Select 
-                      value={dayOfWeek} 
-                      onValueChange={setDayOfWeek}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Jour de la semaine" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Lundi">Lundi</SelectItem>
-                        <SelectItem value="Mardi">Mardi</SelectItem>
-                        <SelectItem value="Mercredi">Mercredi</SelectItem>
-                        <SelectItem value="Jeudi">Jeudi</SelectItem>
-                        <SelectItem value="Vendredi">Vendredi</SelectItem>
-                        <SelectItem value="Samedi">Samedi</SelectItem>
-                        <SelectItem value="Dimanche">Dimanche</SelectItem>
-                        <SelectItem value="Tous les jours">Tous les jours</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </FormItem>
-                )}
-              />
+          {scheduleType === 'weekly' && (
+            <div className="space-y-2 p-3 border rounded-md">
+              <FormLabel>Jours de la semaine</FormLabel>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-1">
+                {weekDays.map(day => (
+                  <div key={day} className="flex items-center space-x-2">
+                    <Checkbox 
+                      id={`day-${day}`} 
+                      checked={selectedDays.includes(day)}
+                      onCheckedChange={() => toggleDay(day)}
+                    />
+                    <Label htmlFor={`day-${day}`}>{day}</Label>
+                  </div>
+                ))}
+              </div>
+              {selectedDays.length === 0 && (
+                <p className="text-xs text-amber-500 mt-2">Veuillez sélectionner au moins un jour</p>
+              )}
             </div>
           )}
 
@@ -788,25 +826,42 @@ const AutomaticModeScheduler: React.FC<AutomaticModeSchedulerProps> = ({ device,
             </div>
           </div>
           
-          <div className="space-y-2">
-            <Label>Temps de fonctionnement:</Label>
-            <div className="text-sm font-medium">{calculateOperationTime()}</div>
+          <div className="flex items-center space-x-2">
+            <Checkbox 
+              id="repeat" 
+              checked={repeat}
+              onCheckedChange={(checked) => setRepeat(checked as boolean)}
+            />
+            <Label htmlFor="repeat">Activer la répétition</Label>
           </div>
           
-          <div className="flex justify-end gap-2">
+          <div className="flex justify-end gap-2 mt-4">
             <DialogClose asChild>
               <Button variant="outline">Annuler</Button>
             </DialogClose>
             <DialogClose asChild>
               <Button 
-                onClick={() => onSchedule({
-                  startTime,
-                  endTime,
-                  scheduleType,
-                  startDate: scheduleType === 'periodic' ? startDate : undefined,
-                  endDate: scheduleType === 'periodic' ? endDate : undefined,
-                  dayOfWeek: scheduleType === 'daily' ? dayOfWeek : undefined
-                })}
+                onClick={() => {
+                  // Ne pas permettre l'enregistrement si aucun jour n'est sélectionné en mode hebdomadaire
+                  if (scheduleType === 'weekly' && selectedDays.length === 0) {
+                    toast({
+                      title: "Sélection requise",
+                      description: "Veuillez sélectionner au moins un jour de la semaine",
+                      variant: "destructive"
+                    });
+                    return;
+                  }
+                  
+                  onSchedule({
+                    startTime,
+                    endTime,
+                    scheduleType,
+                    startDate: scheduleType === 'periodic' ? startDate : undefined,
+                    endDate: scheduleType === 'periodic' ? endDate : undefined,
+                    daysOfWeek: scheduleType === 'weekly' ? selectedDays : undefined,
+                    repeat
+                  });
+                }}
               >
                 Enregistrer
               </Button>
