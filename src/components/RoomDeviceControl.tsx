@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -76,10 +75,7 @@ interface Device {
   scheduledTime?: {
     startTime: string;
     endTime: string;
-    scheduleType?: 'daily' | 'periodic' | 'weekly';
-    startDate?: Date;
-    endDate?: Date;
-    daysOfWeek?: string[];
+    scheduleType?: 'daily';
     repeat?: boolean;
   };
   temperatureThresholds?: {
@@ -133,6 +129,14 @@ const mockRooms: Room[] = [
         status: false, // Inactif par défaut
         icon: <Blinds className="h-5 w-5" />,
         controlMode: 'manual'
+      },
+      {
+        id: '14',
+        name: 'Éclairage',
+        type: 'lighting',
+        status: false, // Inactif par défaut
+        icon: <Lamp className="h-5 w-5" />,
+        controlMode: 'manual'
       }
     ]
   },
@@ -172,6 +176,14 @@ const mockRooms: Room[] = [
         status: false, // Inactif par défaut
         icon: <Blinds className="h-5 w-5" />,
         controlMode: 'auto'
+      },
+      {
+        id: '24',
+        name: 'Éclairage',
+        type: 'lighting',
+        status: false, // Inactif par défaut
+        icon: <Lamp className="h-5 w-5" />,
+        controlMode: 'manual'
       }
     ]
   },
@@ -205,6 +217,14 @@ const mockRooms: Room[] = [
         status: false, // Inactif par défaut
         icon: <Blinds className="h-5 w-5" />,
         controlMode: 'manual'
+      },
+      {
+        id: '34',
+        name: 'Éclairage',
+        type: 'lighting',
+        status: false, // Inactif par défaut
+        icon: <Lamp className="h-5 w-5" />,
+        controlMode: 'manual'
       }
     ]
   },
@@ -220,6 +240,30 @@ const mockRooms: Room[] = [
         status: false, // Inactif par défaut
         icon: <Lamp className="h-5 w-5" />,
         controlMode: 'manual'
+      },
+      {
+        id: '42',
+        name: 'Chauffage',
+        type: 'heating',
+        status: false, // Inactif par défaut
+        icon: <Thermometer className="h-5 w-5" />,
+        temperature: '20°C',
+        controlMode: 'manual',
+        temperatureThresholds: {
+          min: 19
+        }
+      },
+      {
+        id: '43',
+        name: 'Climatisation',
+        type: 'cooling',
+        status: false, // Inactif par défaut
+        icon: <Snowflake className="h-5 w-5" />,
+        temperature: '20°C',
+        controlMode: 'auto',
+        temperatureThresholds: {
+          max: 24
+        }
       }
     ]
   },
@@ -332,10 +376,7 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
   const scheduleDevice = (deviceId: string, scheduleData: {
     startTime: string;
     endTime: string;
-    scheduleType: 'daily' | 'periodic' | 'weekly';
-    startDate?: Date;
-    endDate?: Date;
-    daysOfWeek?: string[];
+    scheduleType: 'daily';
     repeat?: boolean;
   }) => {
     const device = selectedRoom.devices.find(d => d.id === deviceId);
@@ -368,17 +409,6 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
       
       if (scheduleData.scheduleType === 'daily') {
         description = `Programmé quotidiennement de ${scheduleData.startTime} à ${scheduleData.endTime}`;
-      } else if (scheduleData.scheduleType === 'weekly') {
-        const days = scheduleData.daysOfWeek ? scheduleData.daysOfWeek.join(', ') : 'aucun jour spécifié';
-        description = `Programmé chaque semaine (${days}) de ${scheduleData.startTime} à ${scheduleData.endTime}`;
-      } else {
-        const startDateStr = scheduleData.startDate ? format(scheduleData.startDate, 'dd/MM/yyyy') : '?';
-        const endDateStr = scheduleData.endDate ? format(scheduleData.endDate, 'dd/MM/yyyy') : '?';
-        description = `Programmé du ${startDateStr} au ${endDateStr} de ${scheduleData.startTime} à ${scheduleData.endTime}`;
-      }
-
-      if (scheduleData.repeat) {
-        description += ' (répétition activée)';
       }
       
       toast({
@@ -849,42 +879,20 @@ interface AutomaticModeSchedulerProps {
   onSchedule: (scheduleData: {
     startTime: string;
     endTime: string;
-    scheduleType: 'daily' | 'periodic' | 'weekly';
-    startDate?: Date;
-    endDate?: Date;
-    daysOfWeek?: string[];
+    scheduleType: 'daily';
     repeat?: boolean;
   }) => void;
 }
 
 const AutomaticModeScheduler: React.FC<AutomaticModeSchedulerProps> = ({ device, onSchedule }) => {
-  const [scheduleType, setScheduleType] = useState<'daily' | 'periodic' | 'weekly'>(
-    device.scheduledTime?.scheduleType || 'daily'
-  );
+  const [scheduleType] = useState<'daily'>('daily');
   const [startTime, setStartTime] = useState(device.scheduledTime?.startTime || "08:00");
   const [endTime, setEndTime] = useState(device.scheduledTime?.endTime || "18:00");
-  const [startDate, setStartDate] = useState<Date | undefined>(device.scheduledTime?.startDate || new Date());
-  const [endDate, setEndDate] = useState<Date | undefined>(device.scheduledTime?.endDate || new Date());
   const [repeat, setRepeat] = useState<boolean>(device.scheduledTime?.repeat || false);
   
-  // Jours de la semaine pour le mode hebdomadaire
-  const [selectedDays, setSelectedDays] = useState<string[]>(
-    device.scheduledTime?.daysOfWeek || ['Lundi']
-  );
-  
-  const weekDays = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
-  
-  const toggleDay = (day: string) => {
-    if (selectedDays.includes(day)) {
-      setSelectedDays(selectedDays.filter(d => d !== day));
-    } else {
-      setSelectedDays([...selectedDays, day]);
-    }
-  };
-
   const form = useForm({
     defaultValues: {
-      scheduleType: device.scheduledTime?.scheduleType || 'daily',
+      scheduleType: 'daily',
     }
   });
 
@@ -911,114 +919,16 @@ const AutomaticModeScheduler: React.FC<AutomaticModeSchedulerProps> = ({ device,
               <FormItem>
                 <FormLabel>Type de programmation</FormLabel>
                 <FormControl>
-                  <RadioGroup 
-                    value={scheduleType} 
-                    onValueChange={(value) => setScheduleType(value as 'daily' | 'periodic' | 'weekly')}
-                    className="flex flex-col space-y-1"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="daily" id="daily" />
-                      <Label htmlFor="daily" className="flex items-center">
-                        <CalendarClock className="h-4 w-4 mr-2" /> Journalier (tous les jours)
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="weekly" id="weekly" />
-                      <Label htmlFor="weekly" className="flex items-center">
-                        <CalendarDays className="h-4 w-4 mr-2" /> Hebdomadaire (jours spécifiques)
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="periodic" id="periodic" />
-                      <Label htmlFor="periodic" className="flex items-center">
-                        <Calendar className="h-4 w-4 mr-2" /> Périodique (période spécifique)
-                      </Label>
-                    </div>
-                  </RadioGroup>
+                  <div className="flex items-center space-x-2 bg-blue-50 dark:bg-blue-900/30 p-3 rounded-md">
+                    <CalendarClock className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    <Label className="text-blue-700 dark:text-blue-300 font-medium">
+                      Journalier (tous les jours)
+                    </Label>
+                  </div>
                 </FormControl>
               </FormItem>
             )}
           />
-
-          {scheduleType === 'weekly' && (
-            <div className="space-y-2 p-3 border rounded-md">
-              <FormLabel>Jours de la semaine</FormLabel>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-1">
-                {weekDays.map(day => (
-                  <div key={day} className="flex items-center space-x-2">
-                    <Checkbox 
-                      id={`day-${day}`} 
-                      checked={selectedDays.includes(day)}
-                      onCheckedChange={() => toggleDay(day)}
-                    />
-                    <Label htmlFor={`day-${day}`}>{day}</Label>
-                  </div>
-                ))}
-              </div>
-              {selectedDays.length === 0 && (
-                <p className="text-xs text-amber-500 mt-2">Veuillez sélectionner au moins un jour</p>
-              )}
-            </div>
-          )}
-
-          {scheduleType === 'periodic' && (
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label>Date de début</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-full justify-start text-left font-normal",
-                        !startDate && "text-muted-foreground"
-                      )}
-                    >
-                      <Calendar className="mr-2 h-4 w-4" />
-                      {startDate ? format(startDate, "dd/MM/yyyy") : <span>Choisir une date</span>}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <CalendarComponent
-                      mode="single"
-                      selected={startDate}
-                      onSelect={setStartDate}
-                      initialFocus
-                      className="p-3 pointer-events-auto"
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Date de fin</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-full justify-start text-left font-normal",
-                        !endDate && "text-muted-foreground"
-                      )}
-                    >
-                      <Calendar className="mr-2 h-4 w-4" />
-                      {endDate ? format(endDate, "dd/MM/yyyy") : <span>Choisir une date</span>}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <CalendarComponent
-                      mode="single"
-                      selected={endDate}
-                      onSelect={setEndDate}
-                      disabled={(date) => date < new Date() || (startDate ? date < startDate : false)}
-                      initialFocus
-                      className="p-3 pointer-events-auto"
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-            </div>
-          )}
           
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -1058,23 +968,10 @@ const AutomaticModeScheduler: React.FC<AutomaticModeSchedulerProps> = ({ device,
             <DialogClose asChild>
               <Button 
                 onClick={() => {
-                  // Ne pas permettre l'enregistrement si aucun jour n'est sélectionné en mode hebdomadaire
-                  if (scheduleType === 'weekly' && selectedDays.length === 0) {
-                    toast({
-                      title: "Sélection requise",
-                      description: "Veuillez sélectionner au moins un jour de la semaine",
-                      variant: "destructive"
-                    });
-                    return;
-                  }
-                  
                   onSchedule({
                     startTime,
                     endTime,
-                    scheduleType,
-                    startDate: scheduleType === 'periodic' ? startDate : undefined,
-                    endDate: scheduleType === 'periodic' ? endDate : undefined,
-                    daysOfWeek: scheduleType === 'weekly' ? selectedDays : undefined,
+                    scheduleType: 'daily',
                     repeat
                   });
                 }}

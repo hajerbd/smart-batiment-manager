@@ -30,28 +30,28 @@ const rooms: Room[] = [
     name: 'Chambre n°1',
     type: 'bedroom',
     position: { top: '10%', left: '10%', width: '30%', height: '35%' },
-    devices: ['chauffage', 'climatisation', 'stores']
+    devices: ['chauffage', 'climatisation', 'stores', 'éclairage']
   },
   {
     id: '2',
     name: 'Chambre n°2',
     type: 'bedroom',
     position: { top: '10%', left: '60%', width: '30%', height: '35%' },
-    devices: ['chauffage', 'climatisation', 'stores']
+    devices: ['chauffage', 'climatisation', 'stores', 'éclairage']
   },
   {
     id: '3',
     name: 'Salon',
     type: 'livingroom',
     position: { top: '55%', left: '10%', width: '30%', height: '35%' },
-    devices: ['chauffage', 'climatisation', 'stores']
+    devices: ['chauffage', 'climatisation', 'stores', 'éclairage']
   },
   {
     id: '4',
     name: 'Couloir',
     type: 'hallway',
     position: { top: '35%', left: '42.5%', width: '15%', height: '30%' },
-    devices: ['éclairage']
+    devices: ['éclairage', 'chauffage', 'climatisation']
   },
   {
     id: '5',
