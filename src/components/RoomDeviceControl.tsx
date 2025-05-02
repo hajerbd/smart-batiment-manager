@@ -95,7 +95,7 @@ interface Room {
   devices: Device[];
 }
 
-// Données simulées avec le mode de contrôle par équipement
+// Données simulées avec le mode de contrôle par équipement et tous inactifs par défaut
 const mockRooms: Room[] = [
   {
     id: '1',
@@ -106,7 +106,7 @@ const mockRooms: Room[] = [
         id: '11',
         name: 'Chauffage',
         type: 'heating',
-        status: true,
+        status: false, // Inactif par défaut
         icon: <Thermometer className="h-5 w-5" />,
         temperature: '21°C',
         controlMode: 'manual',
@@ -118,7 +118,7 @@ const mockRooms: Room[] = [
         id: '12',
         name: 'Climatisation',
         type: 'cooling',
-        status: false,
+        status: false, // Inactif par défaut
         icon: <Snowflake className="h-5 w-5" />,
         temperature: '21°C',
         controlMode: 'auto',
@@ -130,7 +130,7 @@ const mockRooms: Room[] = [
         id: '13',
         name: 'Stores automatiques',
         type: 'blinds',
-        status: true,
+        status: false, // Inactif par défaut
         icon: <Blinds className="h-5 w-5" />,
         controlMode: 'manual'
       }
@@ -145,7 +145,7 @@ const mockRooms: Room[] = [
         id: '21',
         name: 'Chauffage',
         type: 'heating',
-        status: false,
+        status: false, // Inactif par défaut
         icon: <Thermometer className="h-5 w-5" />,
         temperature: '19°C',
         controlMode: 'auto',
@@ -157,7 +157,7 @@ const mockRooms: Room[] = [
         id: '22',
         name: 'Climatisation',
         type: 'cooling',
-        status: true,
+        status: false, // Inactif par défaut
         icon: <Snowflake className="h-5 w-5" />,
         temperature: '19°C',
         controlMode: 'manual',
@@ -169,7 +169,7 @@ const mockRooms: Room[] = [
         id: '23',
         name: 'Stores automatiques',
         type: 'blinds',
-        status: false,
+        status: false, // Inactif par défaut
         icon: <Blinds className="h-5 w-5" />,
         controlMode: 'auto'
       }
@@ -184,7 +184,7 @@ const mockRooms: Room[] = [
         id: '31',
         name: 'Chauffage',
         type: 'heating',
-        status: true,
+        status: false, // Inactif par défaut
         icon: <Thermometer className="h-5 w-5" />,
         temperature: '20°C',
         controlMode: 'manual'
@@ -193,7 +193,7 @@ const mockRooms: Room[] = [
         id: '32',
         name: 'Climatisation',
         type: 'cooling',
-        status: false,
+        status: false, // Inactif par défaut
         icon: <Snowflake className="h-5 w-5" />,
         temperature: '20°C',
         controlMode: 'auto'
@@ -202,7 +202,7 @@ const mockRooms: Room[] = [
         id: '33',
         name: 'Stores automatiques',
         type: 'blinds',
-        status: true,
+        status: false, // Inactif par défaut
         icon: <Blinds className="h-5 w-5" />,
         controlMode: 'manual'
       }
@@ -217,7 +217,7 @@ const mockRooms: Room[] = [
         id: '41',
         name: 'Lumière principale',
         type: 'lighting',
-        status: true,
+        status: false, // Inactif par défaut
         icon: <Lamp className="h-5 w-5" />,
         controlMode: 'manual'
       }
@@ -232,7 +232,7 @@ const mockRooms: Room[] = [
         id: '51',
         name: 'Vannes d\'irrigation',
         type: 'irrigation',
-        status: false,
+        status: false, // Inactif par défaut
         icon: <Droplet className="h-5 w-5" />,
         controlMode: 'auto'
       }
