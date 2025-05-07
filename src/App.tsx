@@ -1,4 +1,9 @@
 
+/**
+ * Composant principal de l'application
+ * - Configure les providers globaux (React Query, Context, Toaster)
+ * - Définit les routes de l'application avec React Router
+ */
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -10,7 +15,9 @@ import Alerts from "./pages/Alerts";
 import Settings from "./pages/Settings";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
+import { DeviceProvider } from "./context/DeviceContext";
 
+// Configuration du client React Query
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -22,27 +29,29 @@ const queryClient = new QueryClient({
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <div className="min-h-screen flex w-full">
-          <Sidebar />
-          <div className="flex-1 flex flex-col">
-            <Header />
-            <main className="flex-1">
-              <Routes>
-                <Route path="/" element={<WelcomePage />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/alerts" element={<Alerts />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-            </main>
+    <DeviceProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <div className="min-h-screen flex w-full">
+            <Sidebar />
+            <div className="flex-1 flex flex-col">
+              <Header />
+              <main className="flex-1">
+                <Routes>
+                  <Route path="/" element={<WelcomePage />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/alerts" element={<Alerts />} />
+                  <Route path="/settings" element={<Settings />} />
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+              </main>
+            </div>
           </div>
-        </div>
-      </BrowserRouter>
-    </TooltipProvider>
+        </BrowserRouter>
+      </TooltipProvider>
+    </DeviceProvider>
   </QueryClientProvider>
 );
 

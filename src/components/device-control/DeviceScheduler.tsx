@@ -1,4 +1,9 @@
 
+/**
+ * Composant pour programmer les horaires de fonctionnement des appareils
+ * - Gère les modes de programmation quotidiens
+ * - Interface adaptée au type d'appareil (irrigation, chauffage, etc.)
+ */
 import React, { useState } from 'react';
 import { Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -31,6 +36,7 @@ interface DeviceSchedulerProps {
 }
 
 export const DeviceScheduler: React.FC<DeviceSchedulerProps> = ({ device, onSchedule }) => {
+  // Initialisation des états avec les valeurs de l'appareil ou des valeurs par défaut
   const [startTime, setStartTime] = useState(device.scheduledTime?.startTime || "08:00");
   const [endTime, setEndTime] = useState(device.scheduledTime?.endTime || "18:00");
   const [repeat, setRepeat] = useState<boolean>(device.scheduledTime?.repeat || false);
@@ -38,32 +44,34 @@ export const DeviceScheduler: React.FC<DeviceSchedulerProps> = ({ device, onSche
     device.scheduledTime?.durationMinutes || 30
   );
   
+  // Configuration du formulaire avec React Hook Form
   const form = useForm({
     defaultValues: {
       scheduleType: 'daily',
     }
   });
 
-  // Special handling for irrigation devices
+  // Détection si l'appareil est un système d'irrigation
   const isIrrigation = device.type === 'irrigation';
 
-  // For irrigation, we just want the hour, so this extracts hour from HH:MM format
+  // Fonction utilitaire pour les appareils d'irrigation (extrait l'heure sans les minutes)
   const getHourFromTime = (time: string): string => {
     return time.split(':')[0] + ':00';
   };
 
+  // Gestion de l'enregistrement de la programmation
   const handleScheduleSave = () => {
     if (isIrrigation) {
-      // For irrigation, use hour-only time format and include duration
+      // Logique spécifique pour les systèmes d'irrigation
       onSchedule({
         startTime: getHourFromTime(startTime),
-        endTime: '', // Not needed for irrigation
+        endTime: '', // Non utilisé pour l'irrigation
         scheduleType: 'daily',
         repeat,
         durationMinutes
       });
     } else {
-      // For other devices, use standard scheduling
+      // Logique standard pour les autres appareils
       onSchedule({
         startTime,
         endTime,
@@ -77,6 +85,7 @@ export const DeviceScheduler: React.FC<DeviceSchedulerProps> = ({ device, onSche
     <div className="space-y-4 py-4">
       <Form {...form}>
         <div className="space-y-4">
+          {/* Type de programmation (toujours quotidien pour l'instant) */}
           <FormField
             control={form.control}
             name="scheduleType"
@@ -96,14 +105,14 @@ export const DeviceScheduler: React.FC<DeviceSchedulerProps> = ({ device, onSche
           />
           
           {isIrrigation ? (
-            // Irrigation-specific scheduling UI
+            // Interface spécifique aux appareils d'irrigation
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="startHour">Heure d'activation</Label>
                 <Input 
                   id="startHour"
                   type="time"
-                  step="3600" // Step of 1 hour (3600 seconds)
+                  step="3600" // Pas de 1 heure (3600 secondes)
                   value={startTime}
                   onChange={(e) => {
                     setStartTime(e.target.value);
@@ -127,7 +136,7 @@ export const DeviceScheduler: React.FC<DeviceSchedulerProps> = ({ device, onSche
               </div>
             </div>
           ) : (
-            // Standard scheduling UI for other device types
+            // Interface standard pour les autres types d'appareils
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="startTime">Heure de début</Label>
@@ -151,6 +160,7 @@ export const DeviceScheduler: React.FC<DeviceSchedulerProps> = ({ device, onSche
             </div>
           )}
           
+          {/* Option de répétition commune à tous les types d'appareils */}
           <div className="flex items-center space-x-2">
             <Checkbox 
               id="repeat" 
@@ -160,6 +170,7 @@ export const DeviceScheduler: React.FC<DeviceSchedulerProps> = ({ device, onSche
             <Label htmlFor="repeat">Activer la répétition</Label>
           </div>
           
+          {/* Boutons d'action */}
           <div className="flex justify-end gap-2 mt-4">
             <DialogClose asChild>
               <Button variant="outline">Annuler</Button>
