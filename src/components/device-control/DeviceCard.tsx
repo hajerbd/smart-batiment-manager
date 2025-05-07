@@ -41,6 +41,7 @@ export interface Device {
     endTime: string;
     scheduleType?: 'daily';
     repeat?: boolean;
+    durationMinutes?: number;
   };
   temperatureThresholds?: {
     min?: number;
@@ -57,6 +58,7 @@ interface DeviceCardProps {
     endTime: string;
     scheduleType: 'daily';
     repeat?: boolean;
+    durationMinutes?: number;
   }) => void;
   onSetTemperatureThresholds: (deviceId: string, thresholds: { min?: number; max?: number }) => void;
 }
@@ -172,14 +174,29 @@ export const DeviceCard: React.FC<DeviceCardProps> = ({
                           </span>
                         </div>
                         
-                        <div className="flex justify-between">
-                          <span>Heure début:</span>
-                          <span className="font-medium">{device.scheduledTime.startTime}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Heure fin:</span>
-                          <span className="font-medium">{device.scheduledTime.endTime}</span>
-                        </div>
+                        {device.type === 'irrigation' ? (
+                          <>
+                            <div className="flex justify-between">
+                              <span>Heure d'activation:</span>
+                              <span className="font-medium">{device.scheduledTime.startTime}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Durée:</span>
+                              <span className="font-medium">{device.scheduledTime.durationMinutes} minutes</span>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div className="flex justify-between">
+                              <span>Heure début:</span>
+                              <span className="font-medium">{device.scheduledTime.startTime}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Heure fin:</span>
+                              <span className="font-medium">{device.scheduledTime.endTime}</span>
+                            </div>
+                          </>
+                        )}
                         
                         {device.scheduledTime.repeat !== undefined && (
                           <div className="flex justify-between">

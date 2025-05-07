@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import DashboardHeader from '@/components/DashboardHeader';
 import AlertsPanel from '@/components/AlertsPanel';
 import HouseView from '@/components/HouseView';
-import RoomDeviceControl from '@/components/RoomDeviceControl';
+import RoomDeviceControl from '@/components/device-control/RoomDeviceControl';
 import WeatherWidget from '@/components/WeatherWidget';
 import { Card, CardContent } from '@/components/ui/card';
 import { CircleCheck, Home, Thermometer } from 'lucide-react';
@@ -83,4 +83,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
