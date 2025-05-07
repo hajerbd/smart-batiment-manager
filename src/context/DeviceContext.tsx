@@ -44,7 +44,7 @@ export const DeviceProvider: React.FC<{ children: ReactNode }> = ({ children }) 
 export const useDeviceContext = () => {
   const context = useContext(DeviceContext);
   if (!context) {
-    throw new Error('useDeviceContext doit être utilisé à l'intérieur d'un DeviceProvider');
+    throw new Error("useDeviceContext doit être utilisé à l'intérieur d'un DeviceProvider");
   }
   return context;
 };

@@ -12,14 +12,14 @@ export const mockRooms: Room[] = [
   {
     id: '1',
     name: 'Chambre n°1',
-    icon: <Home className="h-5 w-5" />,
+    icon: React.createElement(Home, { className: "h-5 w-5" }),
     devices: [
       {
         id: '11',
         name: 'Chauffage',
         type: 'heating',
         status: false, // Inactif par défaut
-        icon: <Thermometer className="h-5 w-5" />,
+        icon: React.createElement(Thermometer, { className: "h-5 w-5" }),
         temperature: '21°C',
         controlMode: 'manual',
         temperatureThresholds: {
@@ -31,7 +31,7 @@ export const mockRooms: Room[] = [
         name: 'Climatisation',
         type: 'cooling',
         status: false, // Inactif par défaut
-        icon: <Snowflake className="h-5 w-5" />,
+        icon: React.createElement(Snowflake, { className: "h-5 w-5" }),
         temperature: '21°C',
         controlMode: 'auto',
         temperatureThresholds: {
@@ -43,7 +43,7 @@ export const mockRooms: Room[] = [
         name: 'Stores automatiques',
         type: 'blinds',
         status: false, // Inactif par défaut
-        icon: <Blinds className="h-5 w-5" />,
+        icon: React.createElement(Blinds, { className: "h-5 w-5" }),
         controlMode: 'manual'
       },
       {
@@ -51,7 +51,7 @@ export const mockRooms: Room[] = [
         name: 'Éclairage',
         type: 'lighting',
         status: false, // Inactif par défaut
-        icon: <Lamp className="h-5 w-5" />,
+        icon: React.createElement(Lamp, { className: "h-5 w-5" }),
         controlMode: 'manual'
       }
     ]
@@ -59,14 +59,14 @@ export const mockRooms: Room[] = [
   {
     id: '2',
     name: 'Chambre n°2',
-    icon: <Home className="h-5 w-5" />,
+    icon: React.createElement(Home, { className: "h-5 w-5" }),
     devices: [
       {
         id: '21',
         name: 'Chauffage',
         type: 'heating',
         status: false, // Inactif par défaut
-        icon: <Thermometer className="h-5 w-5" />,
+        icon: React.createElement(Thermometer, { className: "h-5 w-5" }),
         temperature: '19°C',
         controlMode: 'auto',
         temperatureThresholds: {
@@ -78,7 +78,7 @@ export const mockRooms: Room[] = [
         name: 'Climatisation',
         type: 'cooling',
         status: false, // Inactif par défaut
-        icon: <Snowflake className="h-5 w-5" />,
+        icon: React.createElement(Snowflake, { className: "h-5 w-5" }),
         temperature: '19°C',
         controlMode: 'manual',
         temperatureThresholds: {
@@ -90,7 +90,7 @@ export const mockRooms: Room[] = [
         name: 'Stores automatiques',
         type: 'blinds',
         status: false, // Inactif par défaut
-        icon: <Blinds className="h-5 w-5" />,
+        icon: React.createElement(Blinds, { className: "h-5 w-5" }),
         controlMode: 'auto'
       },
       {
@@ -98,7 +98,7 @@ export const mockRooms: Room[] = [
         name: 'Éclairage',
         type: 'lighting',
         status: false, // Inactif par défaut
-        icon: <Lamp className="h-5 w-5" />,
+        icon: React.createElement(Lamp, { className: "h-5 w-5" }),
         controlMode: 'manual'
       }
     ]
@@ -106,14 +106,14 @@ export const mockRooms: Room[] = [
   {
     id: '3',
     name: 'Salon',
-    icon: <Home className="h-5 w-5" />,
+    icon: React.createElement(Home, { className: "h-5 w-5" }),
     devices: [
       {
         id: '31',
         name: 'Chauffage',
         type: 'heating',
         status: false, // Inactif par défaut
-        icon: <Thermometer className="h-5 w-5" />,
+        icon: React.createElement(Thermometer, { className: "h-5 w-5" }),
         temperature: '20°C',
         controlMode: 'manual'
       },
@@ -122,7 +122,7 @@ export const mockRooms: Room[] = [
         name: 'Climatisation',
         type: 'cooling',
         status: false, // Inactif par défaut
-        icon: <Snowflake className="h-5 w-5" />,
+        icon: React.createElement(Snowflake, { className: "h-5 w-5" }),
         temperature: '20°C',
         controlMode: 'auto'
       },
@@ -131,7 +131,7 @@ export const mockRooms: Room[] = [
         name: 'Stores automatiques',
         type: 'blinds',
         status: false, // Inactif par défaut
-        icon: <Blinds className="h-5 w-5" />,
+        icon: React.createElement(Blinds, { className: "h-5 w-5" }),
         controlMode: 'manual'
       },
       {
@@ -139,7 +139,7 @@ export const mockRooms: Room[] = [
         name: 'Éclairage',
         type: 'lighting',
         status: false, // Inactif par défaut
-        icon: <Lamp className="h-5 w-5" />,
+        icon: React.createElement(Lamp, { className: "h-5 w-5" }),
         controlMode: 'manual'
       }
     ]
@@ -147,14 +147,14 @@ export const mockRooms: Room[] = [
   {
     id: '4',
     name: 'Couloir',
-    icon: <Home className="h-5 w-5" />,
+    icon: React.createElement(Home, { className: "h-5 w-5" }),
     devices: [
       {
         id: '41',
         name: 'Lumière principale',
         type: 'lighting',
         status: false, // Inactif par défaut
-        icon: <Lamp className="h-5 w-5" />,
+        icon: React.createElement(Lamp, { className: "h-5 w-5" }),
         controlMode: 'manual'
       },
       {
@@ -162,7 +162,7 @@ export const mockRooms: Room[] = [
         name: 'Chauffage',
         type: 'heating',
         status: false, // Inactif par défaut
-        icon: <Thermometer className="h-5 w-5" />,
+        icon: React.createElement(Thermometer, { className: "h-5 w-5" }),
         temperature: '20°C',
         controlMode: 'manual',
         temperatureThresholds: {
@@ -174,7 +174,7 @@ export const mockRooms: Room[] = [
         name: 'Climatisation',
         type: 'cooling',
         status: false, // Inactif par défaut
-        icon: <Snowflake className="h-5 w-5" />,
+        icon: React.createElement(Snowflake, { className: "h-5 w-5" }),
         temperature: '20°C',
         controlMode: 'auto',
         temperatureThresholds: {
@@ -186,14 +186,14 @@ export const mockRooms: Room[] = [
   {
     id: '5',
     name: 'Jardin',
-    icon: <Home className="h-5 w-5" />,
+    icon: React.createElement(Home, { className: "h-5 w-5" }),
     devices: [
       {
         id: '51',
         name: 'Vannes d\'irrigation',
         type: 'irrigation',
         status: false, // Inactif par défaut
-        icon: <Droplet className="h-5 w-5" />,
+        icon: React.createElement(Droplet, { className: "h-5 w-5" }),
         controlMode: 'auto'
       }
     ]
