@@ -1,11 +1,8 @@
 
 import React from 'react';
-import { User, UserCog } from 'lucide-react';
+import { User } from 'lucide-react';
 import { ProfileCard } from '@/components/settings/ProfileCard';
 import { PreferencesCard } from '@/components/settings/PreferencesCard';
-import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 const Settings = () => {
   return (
@@ -18,27 +15,6 @@ const Settings = () => {
       <div className="space-y-6">
         <ProfileCard />
         <PreferencesCard />
-        
-        {/* Carte d'administration pour les administrateurs */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <UserCog className="h-5 w-5" />
-              Administration
-            </CardTitle>
-            <CardDescription>
-              Options d'administration du système réservées aux administrateurs
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Link to="/user-management">
-              <Button variant="outline" className="w-full flex items-center justify-center gap-2">
-                <UserCog className="h-4 w-4" />
-                Gestion des utilisateurs
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );
