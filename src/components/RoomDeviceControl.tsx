@@ -75,10 +75,7 @@ interface Device {
   scheduledTime?: {
     startTime: string;
     endTime: string;
-    scheduleType?: 'daily' | 'periodic' | 'weekly';
-    startDate?: Date;
-    endDate?: Date;
-    daysOfWeek?: string[];
+    scheduleType?: 'daily';
     repeat?: boolean;
   };
   temperatureThresholds?: {
@@ -94,7 +91,7 @@ interface Room {
   devices: Device[];
 }
 
-// Données simulées avec le mode de contrôle par équipement
+// Données simulées avec le mode de contrôle par équipement et tous inactifs par défaut
 const mockRooms: Room[] = [
   {
     id: '1',
@@ -105,7 +102,7 @@ const mockRooms: Room[] = [
         id: '11',
         name: 'Chauffage',
         type: 'heating',
-        status: true,
+        status: false, // Inactif par défaut
         icon: <Thermometer className="h-5 w-5" />,
         temperature: '21°C',
         controlMode: 'manual',
@@ -117,7 +114,7 @@ const mockRooms: Room[] = [
         id: '12',
         name: 'Climatisation',
         type: 'cooling',
-        status: false,
+        status: false, // Inactif par défaut
         icon: <Snowflake className="h-5 w-5" />,
         temperature: '21°C',
         controlMode: 'auto',
@@ -129,8 +126,16 @@ const mockRooms: Room[] = [
         id: '13',
         name: 'Stores automatiques',
         type: 'blinds',
-        status: true,
+        status: false, // Inactif par défaut
         icon: <Blinds className="h-5 w-5" />,
+        controlMode: 'manual'
+      },
+      {
+        id: '14',
+        name: 'Éclairage',
+        type: 'lighting',
+        status: false, // Inactif par défaut
+        icon: <Lamp className="h-5 w-5" />,
         controlMode: 'manual'
       }
     ]
@@ -144,7 +149,7 @@ const mockRooms: Room[] = [
         id: '21',
         name: 'Chauffage',
         type: 'heating',
-        status: false,
+        status: false, // Inactif par défaut
         icon: <Thermometer className="h-5 w-5" />,
         temperature: '19°C',
         controlMode: 'auto',
@@ -156,7 +161,7 @@ const mockRooms: Room[] = [
         id: '22',
         name: 'Climatisation',
         type: 'cooling',
-        status: true,
+        status: false, // Inactif par défaut
         icon: <Snowflake className="h-5 w-5" />,
         temperature: '19°C',
         controlMode: 'manual',
@@ -168,9 +173,17 @@ const mockRooms: Room[] = [
         id: '23',
         name: 'Stores automatiques',
         type: 'blinds',
-        status: false,
+        status: false, // Inactif par défaut
         icon: <Blinds className="h-5 w-5" />,
         controlMode: 'auto'
+      },
+      {
+        id: '24',
+        name: 'Éclairage',
+        type: 'lighting',
+        status: false, // Inactif par défaut
+        icon: <Lamp className="h-5 w-5" />,
+        controlMode: 'manual'
       }
     ]
   },
@@ -183,7 +196,7 @@ const mockRooms: Room[] = [
         id: '31',
         name: 'Chauffage',
         type: 'heating',
-        status: true,
+        status: false, // Inactif par défaut
         icon: <Thermometer className="h-5 w-5" />,
         temperature: '20°C',
         controlMode: 'manual'
@@ -192,7 +205,7 @@ const mockRooms: Room[] = [
         id: '32',
         name: 'Climatisation',
         type: 'cooling',
-        status: false,
+        status: false, // Inactif par défaut
         icon: <Snowflake className="h-5 w-5" />,
         temperature: '20°C',
         controlMode: 'auto'
@@ -201,8 +214,16 @@ const mockRooms: Room[] = [
         id: '33',
         name: 'Stores automatiques',
         type: 'blinds',
-        status: true,
+        status: false, // Inactif par défaut
         icon: <Blinds className="h-5 w-5" />,
+        controlMode: 'manual'
+      },
+      {
+        id: '34',
+        name: 'Éclairage',
+        type: 'lighting',
+        status: false, // Inactif par défaut
+        icon: <Lamp className="h-5 w-5" />,
         controlMode: 'manual'
       }
     ]
@@ -216,9 +237,33 @@ const mockRooms: Room[] = [
         id: '41',
         name: 'Lumière principale',
         type: 'lighting',
-        status: true,
+        status: false, // Inactif par défaut
         icon: <Lamp className="h-5 w-5" />,
         controlMode: 'manual'
+      },
+      {
+        id: '42',
+        name: 'Chauffage',
+        type: 'heating',
+        status: false, // Inactif par défaut
+        icon: <Thermometer className="h-5 w-5" />,
+        temperature: '20°C',
+        controlMode: 'manual',
+        temperatureThresholds: {
+          min: 19
+        }
+      },
+      {
+        id: '43',
+        name: 'Climatisation',
+        type: 'cooling',
+        status: false, // Inactif par défaut
+        icon: <Snowflake className="h-5 w-5" />,
+        temperature: '20°C',
+        controlMode: 'auto',
+        temperatureThresholds: {
+          max: 24
+        }
       }
     ]
   },
@@ -231,7 +276,7 @@ const mockRooms: Room[] = [
         id: '51',
         name: 'Vannes d\'irrigation',
         type: 'irrigation',
-        status: false,
+        status: false, // Inactif par défaut
         icon: <Droplet className="h-5 w-5" />,
         controlMode: 'auto'
       }
@@ -331,10 +376,7 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
   const scheduleDevice = (deviceId: string, scheduleData: {
     startTime: string;
     endTime: string;
-    scheduleType: 'daily' | 'periodic' | 'weekly';
-    startDate?: Date;
-    endDate?: Date;
-    daysOfWeek?: string[];
+    scheduleType: 'daily';
     repeat?: boolean;
   }) => {
     const device = selectedRoom.devices.find(d => d.id === deviceId);
@@ -367,17 +409,6 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
       
       if (scheduleData.scheduleType === 'daily') {
         description = `Programmé quotidiennement de ${scheduleData.startTime} à ${scheduleData.endTime}`;
-      } else if (scheduleData.scheduleType === 'weekly') {
-        const days = scheduleData.daysOfWeek ? scheduleData.daysOfWeek.join(', ') : 'aucun jour spécifié';
-        description = `Programmé chaque semaine (${days}) de ${scheduleData.startTime} à ${scheduleData.endTime}`;
-      } else {
-        const startDateStr = scheduleData.startDate ? format(scheduleData.startDate, 'dd/MM/yyyy') : '?';
-        const endDateStr = scheduleData.endDate ? format(scheduleData.endDate, 'dd/MM/yyyy') : '?';
-        description = `Programmé du ${startDateStr} au ${endDateStr} de ${scheduleData.startTime} à ${scheduleData.endTime}`;
-      }
-
-      if (scheduleData.repeat) {
-        description += ' (répétition activée)';
       }
       
       toast({
@@ -519,120 +550,146 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {/* Paramètres spécifiques aux appareils de chauffage/climatisation en mode auto */}
+                    {/* Nouveau design pour les paramètres de chauffage/climatisation en mode auto */}
                     {(device.type === 'heating' || device.type === 'cooling') && (
-                      <Collapsible className="border rounded-lg p-3 mb-3">
-                        <CollapsibleTrigger className="flex w-full justify-between items-center">
-                          <div className="flex items-center gap-2">
+                      <div className="space-y-4">
+                        <div className="bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 rounded-xl p-4 shadow-md">
+                          <div className="flex items-center gap-2 mb-3">
                             {device.type === 'heating' ? (
-                              <ThermometerSun className="h-4 w-4 text-amber-500" />
+                              <div className="bg-gradient-to-r from-amber-300 to-amber-500 text-white p-2 rounded-lg">
+                                <ThermometerSun className="h-5 w-5" />
+                              </div>
                             ) : (
-                              <ThermometerSnowflake className="h-4 w-4 text-blue-500" />
+                              <div className="bg-gradient-to-r from-blue-400 to-blue-600 text-white p-2 rounded-lg">
+                                <ThermometerSnowflake className="h-5 w-5" />
+                              </div>
                             )}
-                            <span className="font-medium text-sm">Seuils de température</span>
+                            <h3 className="font-bold">
+                              {device.type === 'heating' ? 'Contrôle de chauffage' : 'Contrôle de climatisation'}
+                            </h3>
                           </div>
-                          <Button variant="ghost" size="icon" className="h-6 w-6">
-                            <Thermometer className="h-4 w-4" />
-                          </Button>
-                        </CollapsibleTrigger>
-                        <CollapsibleContent className="mt-3">
-                          {device.type === 'heating' ? (
-                            <div className="space-y-4">
-                              <div className="space-y-2">
-                                <div className="flex justify-between mb-2">
-                                  <Label htmlFor={`min-temp-${device.id}`}>
-                                    Température minimale (°C)
-                                  </Label>
-                                  <span className="font-medium">
-                                    {device.temperatureThresholds?.min || 20}°C
-                                  </span>
+                          
+                          <div className="bg-white dark:bg-slate-700 rounded-lg p-4 shadow-inner mb-4">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="font-medium text-sm">
+                                {device.type === 'heating' ? 'Température minimale' : 'Température maximale'}
+                              </span>
+                              <div className={cn(
+                                "font-bold text-lg px-3 py-1 rounded-lg",
+                                device.type === 'heating' 
+                                  ? "bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300"
+                                  : "bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300"
+                              )}>
+                                {device.type === 'heating' 
+                                  ? `${device.temperatureThresholds?.min || 20}°C`
+                                  : `${device.temperatureThresholds?.max || 24}°C`
+                                }
+                              </div>
+                            </div>
+                            
+                            {/* Indicateur visuel de la plage de température avec gradient */}
+                            <div className="mt-6 mb-2">
+                              <div className={cn(
+                                "h-4 rounded-full",
+                                device.type === 'heating'
+                                  ? "bg-gradient-to-r from-blue-300 via-green-300 to-amber-500"
+                                  : "bg-gradient-to-r from-blue-500 via-green-300 to-amber-300"
+                              )}>
+                                <div className="relative">
+                                  {device.type === 'heating' ? (
+                                    <div 
+                                      className="absolute w-6 h-6 bg-white dark:bg-slate-800 rounded-full shadow-md border-2 border-amber-500 flex items-center justify-center transform -translate-y-1/2"
+                                      style={{ 
+                                        left: `${((device.temperatureThresholds?.min || 20) - 15) / 10 * 100}%`,
+                                      }}
+                                    >
+                                      <div className="w-2 h-2 bg-amber-500 rounded-full" />
+                                    </div>
+                                  ) : (
+                                    <div 
+                                      className="absolute w-6 h-6 bg-white dark:bg-slate-800 rounded-full shadow-md border-2 border-blue-500 flex items-center justify-center transform -translate-y-1/2"
+                                      style={{ 
+                                        left: `${((device.temperatureThresholds?.max || 24) - 20) / 10 * 100}%`,
+                                      }}
+                                    >
+                                      <div className="w-2 h-2 bg-blue-500 rounded-full" />
+                                    </div>
+                                  )}
                                 </div>
-                                <Slider
-                                  id={`min-temp-${device.id}`}
-                                  min={15}
-                                  max={25}
-                                  step={0.5}
-                                  value={[device.temperatureThresholds?.min || 20]}
-                                  onValueChange={(value) => {
+                              </div>
+                              <div className="flex justify-between text-xs mt-1">
+                                <span>{device.type === 'heating' ? '15°C' : '20°C'}</span>
+                                <span>{device.type === 'heating' ? '25°C' : '30°C'}</span>
+                              </div>
+                            </div>
+
+                            {/* Slider avec style amélioré */}
+                            <div className="mt-6">
+                              <Slider
+                                className={cn(
+                                  "mt-2",
+                                  device.type === 'heating' ? "slider-amber" : "slider-blue"
+                                )}
+                                min={device.type === 'heating' ? 15 : 20}
+                                max={device.type === 'heating' ? 25 : 30}
+                                step={0.5}
+                                value={[device.type === 'heating' 
+                                  ? (device.temperatureThresholds?.min || 20) 
+                                  : (device.temperatureThresholds?.max || 24)
+                                ]}
+                                onValueChange={(value) => {
+                                  if (device.type === 'heating') {
                                     setTemperatureThresholds(device.id, { min: value[0] });
-                                  }}
-                                  className="mt-2"
-                                />
-                                <div className="flex justify-between text-xs text-muted-foreground">
-                                  <span>15°C</span>
-                                  <span>25°C</span>
-                                </div>
-                              </div>
-                              
-                              <div className="bg-muted/30 p-3 rounded-md text-sm">
-                                <div className="flex items-center gap-2 mb-2">
-                                  <ThermometerSun className="h-4 w-4 text-amber-500" />
-                                  <span className="font-medium">Fonctionnement:</span>
-                                </div>
-                                <p className="text-xs">
-                                  Le chauffage s'activera automatiquement lorsque la température descend en-dessous de {device.temperatureThresholds?.min || 20}°C.
-                                </p>
-                                {device.status ? (
-                                  <div className="mt-2 text-xs flex items-center gap-1 text-green-500">
-                                    <Power className="h-3 w-3" /> Actuellement actif
-                                  </div>
-                                ) : (
-                                  <div className="mt-2 text-xs flex items-center gap-1 text-gray-500">
-                                    <Power className="h-3 w-3" /> Actuellement inactif
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="space-y-4">
-                              <div className="space-y-2">
-                                <div className="flex justify-between mb-2">
-                                  <Label htmlFor={`max-temp-${device.id}`}>
-                                    Température maximale (°C)
-                                  </Label>
-                                  <span className="font-medium">
-                                    {device.temperatureThresholds?.max || 24}°C
-                                  </span>
-                                </div>
-                                <Slider
-                                  id={`max-temp-${device.id}`}
-                                  min={20}
-                                  max={30}
-                                  step={0.5}
-                                  value={[device.temperatureThresholds?.max || 24]}
-                                  onValueChange={(value) => {
+                                  } else {
                                     setTemperatureThresholds(device.id, { max: value[0] });
-                                  }}
-                                  className="mt-2"
-                                />
-                                <div className="flex justify-between text-xs text-muted-foreground">
-                                  <span>20°C</span>
-                                  <span>30°C</span>
-                                </div>
+                                  }
+                                }}
+                              />
+                            </div>
+                          </div>
+                          
+                          <div className={cn(
+                            "p-3 rounded-lg mt-3 flex items-center gap-3",
+                            device.status 
+                              ? (device.type === 'heating' 
+                                ? "bg-amber-100 dark:bg-amber-900/30" 
+                                : "bg-blue-100 dark:bg-blue-900/30")
+                              : "bg-slate-100 dark:bg-slate-800"
+                          )}>
+                            <div className={cn(
+                              "p-1 rounded-full",
+                              device.status
+                                ? (device.type === 'heating'
+                                  ? "bg-amber-200 dark:bg-amber-800"
+                                  : "bg-blue-200 dark:bg-blue-800")
+                                : "bg-slate-200 dark:bg-slate-700"
+                            )}>
+                              <Power className={cn(
+                                "h-4 w-4",
+                                device.status
+                                  ? (device.type === 'heating' 
+                                    ? "text-amber-600 dark:text-amber-400" 
+                                    : "text-blue-600 dark:text-blue-400")
+                                  : "text-slate-400"
+                              )} />
+                            </div>
+                            <div>
+                              <div className="font-medium text-sm">
+                                {device.status 
+                                  ? "Régulation active" 
+                                  : "Régulation inactive"
+                                }
                               </div>
-                              
-                              <div className="bg-muted/30 p-3 rounded-md text-sm">
-                                <div className="flex items-center gap-2 mb-2">
-                                  <ThermometerSnowflake className="h-4 w-4 text-blue-500" />
-                                  <span className="font-medium">Fonctionnement:</span>
-                                </div>
-                                <p className="text-xs">
-                                  La climatisation s'activera automatiquement lorsque la température monte au-dessus de {device.temperatureThresholds?.max || 24}°C.
-                                </p>
-                                {device.status ? (
-                                  <div className="mt-2 text-xs flex items-center gap-1 text-green-500">
-                                    <Power className="h-3 w-3" /> Actuellement actif
-                                  </div>
-                                ) : (
-                                  <div className="mt-2 text-xs flex items-center gap-1 text-gray-500">
-                                    <Power className="h-3 w-3" /> Actuellement inactif
-                                  </div>
-                                )}
+                              <div className="text-xs text-muted-foreground mt-0.5">
+                                {device.type === 'heating' 
+                                  ? `S'active si température < ${device.temperatureThresholds?.min || 20}°C` 
+                                  : `S'active si température > ${device.temperatureThresholds?.max || 24}°C`
+                                }
                               </div>
                             </div>
-                          )}
-                        </CollapsibleContent>
-                      </Collapsible>
+                          </div>
+                        </div>
+                      </div>
                     )}
 
                     {/* Planification pour les autres appareils (non chauffage/climatisation) */}
@@ -822,42 +879,20 @@ interface AutomaticModeSchedulerProps {
   onSchedule: (scheduleData: {
     startTime: string;
     endTime: string;
-    scheduleType: 'daily' | 'periodic' | 'weekly';
-    startDate?: Date;
-    endDate?: Date;
-    daysOfWeek?: string[];
+    scheduleType: 'daily';
     repeat?: boolean;
   }) => void;
 }
 
 const AutomaticModeScheduler: React.FC<AutomaticModeSchedulerProps> = ({ device, onSchedule }) => {
-  const [scheduleType, setScheduleType] = useState<'daily' | 'periodic' | 'weekly'>(
-    device.scheduledTime?.scheduleType || 'daily'
-  );
+  const [scheduleType] = useState<'daily'>('daily');
   const [startTime, setStartTime] = useState(device.scheduledTime?.startTime || "08:00");
   const [endTime, setEndTime] = useState(device.scheduledTime?.endTime || "18:00");
-  const [startDate, setStartDate] = useState<Date | undefined>(device.scheduledTime?.startDate || new Date());
-  const [endDate, setEndDate] = useState<Date | undefined>(device.scheduledTime?.endDate || new Date());
   const [repeat, setRepeat] = useState<boolean>(device.scheduledTime?.repeat || false);
   
-  // Jours de la semaine pour le mode hebdomadaire
-  const [selectedDays, setSelectedDays] = useState<string[]>(
-    device.scheduledTime?.daysOfWeek || ['Lundi']
-  );
-  
-  const weekDays = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
-  
-  const toggleDay = (day: string) => {
-    if (selectedDays.includes(day)) {
-      setSelectedDays(selectedDays.filter(d => d !== day));
-    } else {
-      setSelectedDays([...selectedDays, day]);
-    }
-  };
-
   const form = useForm({
     defaultValues: {
-      scheduleType: device.scheduledTime?.scheduleType || 'daily',
+      scheduleType: 'daily',
     }
   });
 
@@ -884,114 +919,16 @@ const AutomaticModeScheduler: React.FC<AutomaticModeSchedulerProps> = ({ device,
               <FormItem>
                 <FormLabel>Type de programmation</FormLabel>
                 <FormControl>
-                  <RadioGroup 
-                    value={scheduleType} 
-                    onValueChange={(value) => setScheduleType(value as 'daily' | 'periodic' | 'weekly')}
-                    className="flex flex-col space-y-1"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="daily" id="daily" />
-                      <Label htmlFor="daily" className="flex items-center">
-                        <CalendarClock className="h-4 w-4 mr-2" /> Journalier (tous les jours)
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="weekly" id="weekly" />
-                      <Label htmlFor="weekly" className="flex items-center">
-                        <CalendarDays className="h-4 w-4 mr-2" /> Hebdomadaire (jours spécifiques)
-                      </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="periodic" id="periodic" />
-                      <Label htmlFor="periodic" className="flex items-center">
-                        <Calendar className="h-4 w-4 mr-2" /> Périodique (période spécifique)
-                      </Label>
-                    </div>
-                  </RadioGroup>
+                  <div className="flex items-center space-x-2 bg-blue-50 dark:bg-blue-900/30 p-3 rounded-md">
+                    <CalendarClock className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    <Label className="text-blue-700 dark:text-blue-300 font-medium">
+                      Journalier (tous les jours)
+                    </Label>
+                  </div>
                 </FormControl>
               </FormItem>
             )}
           />
-
-          {scheduleType === 'weekly' && (
-            <div className="space-y-2 p-3 border rounded-md">
-              <FormLabel>Jours de la semaine</FormLabel>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-1">
-                {weekDays.map(day => (
-                  <div key={day} className="flex items-center space-x-2">
-                    <Checkbox 
-                      id={`day-${day}`} 
-                      checked={selectedDays.includes(day)}
-                      onCheckedChange={() => toggleDay(day)}
-                    />
-                    <Label htmlFor={`day-${day}`}>{day}</Label>
-                  </div>
-                ))}
-              </div>
-              {selectedDays.length === 0 && (
-                <p className="text-xs text-amber-500 mt-2">Veuillez sélectionner au moins un jour</p>
-              )}
-            </div>
-          )}
-
-          {scheduleType === 'periodic' && (
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label>Date de début</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-full justify-start text-left font-normal",
-                        !startDate && "text-muted-foreground"
-                      )}
-                    >
-                      <Calendar className="mr-2 h-4 w-4" />
-                      {startDate ? format(startDate, "dd/MM/yyyy") : <span>Choisir une date</span>}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <CalendarComponent
-                      mode="single"
-                      selected={startDate}
-                      onSelect={setStartDate}
-                      initialFocus
-                      className="p-3 pointer-events-auto"
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Date de fin</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-full justify-start text-left font-normal",
-                        !endDate && "text-muted-foreground"
-                      )}
-                    >
-                      <Calendar className="mr-2 h-4 w-4" />
-                      {endDate ? format(endDate, "dd/MM/yyyy") : <span>Choisir une date</span>}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <CalendarComponent
-                      mode="single"
-                      selected={endDate}
-                      onSelect={setEndDate}
-                      disabled={(date) => date < new Date() || (startDate ? date < startDate : false)}
-                      initialFocus
-                      className="p-3 pointer-events-auto"
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-            </div>
-          )}
           
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -1031,23 +968,10 @@ const AutomaticModeScheduler: React.FC<AutomaticModeSchedulerProps> = ({ device,
             <DialogClose asChild>
               <Button 
                 onClick={() => {
-                  // Ne pas permettre l'enregistrement si aucun jour n'est sélectionné en mode hebdomadaire
-                  if (scheduleType === 'weekly' && selectedDays.length === 0) {
-                    toast({
-                      title: "Sélection requise",
-                      description: "Veuillez sélectionner au moins un jour de la semaine",
-                      variant: "destructive"
-                    });
-                    return;
-                  }
-                  
                   onSchedule({
                     startTime,
                     endTime,
-                    scheduleType,
-                    startDate: scheduleType === 'periodic' ? startDate : undefined,
-                    endDate: scheduleType === 'periodic' ? endDate : undefined,
-                    daysOfWeek: scheduleType === 'weekly' ? selectedDays : undefined,
+                    scheduleType: 'daily',
                     repeat
                   });
                 }}
