@@ -7,7 +7,7 @@ import {
   Bed, 
   Sofa, 
   ArrowRightCircle,
-  Timer, 
+  Power, 
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -56,15 +56,15 @@ const rooms: Room[] = [
 const getRoomIcon = (type: Room['type']) => {
   switch (type) {
     case 'bedroom':
-      return <Bed className="h-4 w-4 md:h-5 md:w-5" />; // Taille réduite davantage
+      return <Bed className="h-4 w-4 md:h-5 md:w-5" />;
     case 'livingroom':
-      return <Sofa className="h-4 w-4 md:h-5 md:w-5" />; // Taille réduite davantage
+      return <Sofa className="h-4 w-4 md:h-5 md:w-5" />;
     case 'hallway':
-      return <ArrowRightCircle className="h-4 w-4 md:h-5 md:w-5" />; // Taille réduite davantage
+      return <ArrowRightCircle className="h-4 w-4 md:h-5 md:w-5" />;
     case 'garden':
-      return <Timer className="h-4 w-4 md:h-5 md:w-5" />; // Taille réduite davantage
+      return <Power className="h-4 w-4 md:h-5 md:w-5" />; // Changé de Timer à Power
     default:
-      return <Home className="h-4 w-4 md:h-5 md:w-5" />; // Taille réduite davantage
+      return <Home className="h-4 w-4 md:h-5 md:w-5" />;
   }
 };
 
