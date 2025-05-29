@@ -75,7 +75,7 @@ interface Device {
   scheduledTime?: {
     startTime: string;
     endTime: string;
-    scheduleType?: 'daily';
+    scheduleType: 'daily';
     repeat?: boolean;
   };
   temperatureThresholds?: {
@@ -710,36 +710,8 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
                               <div className="text-xs space-y-2 bg-muted/30 rounded-md p-3">
                                 <div className="flex justify-between">
                                   <span>Type de programmation:</span>
-                                  <span className="font-medium">
-                                    {device.scheduledTime.scheduleType === 'daily' && 'Journalier'}
-                                    {device.scheduledTime.scheduleType === 'weekly' && 'Hebdomadaire'}
-                                    {device.scheduledTime.scheduleType === 'periodic' && 'Périodique'}
-                                  </span>
+                                  <span className="font-medium">Journalier</span>
                                 </div>
-                                
-                                {device.scheduledTime.scheduleType === 'weekly' && device.scheduledTime.daysOfWeek && (
-                                  <div className="flex justify-between">
-                                    <span>Jours programmés:</span>
-                                    <span className="font-medium">{device.scheduledTime.daysOfWeek.join(', ')}</span>
-                                  </div>
-                                )}
-                                
-                                {device.scheduledTime.scheduleType === 'periodic' && (
-                                  <>
-                                    <div className="flex justify-between mt-1">
-                                      <span>Date début:</span>
-                                      <span className="font-medium">
-                                        {device.scheduledTime.startDate && format(device.scheduledTime.startDate, 'dd/MM/yyyy')}
-                                      </span>
-                                    </div>
-                                    <div className="flex justify-between mt-1">
-                                      <span>Date fin:</span>
-                                      <span className="font-medium">
-                                        {device.scheduledTime.endDate && format(device.scheduledTime.endDate, 'dd/MM/yyyy')}
-                                      </span>
-                                    </div>
-                                  </>
-                                )}
                                 
                                 <div className="flex justify-between">
                                   <span>Heure début:</span>
