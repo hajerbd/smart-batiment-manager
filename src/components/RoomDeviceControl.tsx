@@ -77,6 +77,7 @@ interface Device {
     endTime: string;
     scheduleType: 'daily';
     repeat?: boolean;
+    durationMinutes?: number; // Nouveau champ pour la durée en minutes
   };
   temperatureThresholds?: {
     min?: number;
@@ -378,6 +379,7 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
     endTime: string;
     scheduleType: 'daily';
     repeat?: boolean;
+    durationMinutes?: number;
   }) => {
     const device = selectedRoom.devices.find(d => d.id === deviceId);
     
@@ -409,6 +411,9 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
       
       if (scheduleData.scheduleType === 'daily') {
         description = `Programmé quotidiennement de ${scheduleData.startTime} à ${scheduleData.endTime}`;
+        if (device.type === 'irrigation' && scheduleData.durationMinutes) {
+          description += ` (${scheduleData.durationMinutes} minutes)`;
+        }
       }
       
       toast({
@@ -722,6 +727,14 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
                                   <span className="font-medium">{device.scheduledTime.endTime}</span>
                                 </div>
                                 
+                                {/* Affichage de la durée pour l'irrigation */}
+                                {device.type === 'irrigation' && device.scheduledTime.durationMinutes && (
+                                  <div className="flex justify-between">
+                                    <span>Durée de fonctionnement:</span>
+                                    <span className="font-medium">{device.scheduledTime.durationMinutes} minutes</span>
+                                  </div>
+                                )}
+                                
                                 {device.scheduledTime.repeat !== undefined && (
                                   <div className="flex justify-between">
                                     <span>Répétition:</span>
@@ -853,6 +866,7 @@ interface AutomaticModeSchedulerProps {
     endTime: string;
     scheduleType: 'daily';
     repeat?: boolean;
+    durationMinutes?: number;
   }) => void;
 }
 
@@ -861,6 +875,7 @@ const AutomaticModeScheduler: React.FC<AutomaticModeSchedulerProps> = ({ device,
   const [startTime, setStartTime] = useState(device.scheduledTime?.startTime || "08:00");
   const [endTime, setEndTime] = useState(device.scheduledTime?.endTime || "18:00");
   const [repeat, setRepeat] = useState<boolean>(device.scheduledTime?.repeat || false);
+  const [durationMinutes, setDurationMinutes] = useState<number>(device.scheduledTime?.durationMinutes || 30);
   
   const form = useForm({
     defaultValues: {
@@ -924,6 +939,30 @@ const AutomaticModeScheduler: React.FC<AutomaticModeSchedulerProps> = ({ device,
             </div>
           </div>
           
+          {/* Champ spécifique pour la durée d'irrigation */}
+          {device.type === 'irrigation' && (
+            <div className="space-y-2">
+              <Label htmlFor="durationMinutes">Durée de fonctionnement (minutes)</Label>
+              <div className="flex items-center space-x-2">
+                <Droplet className="h-4 w-4 text-blue-500" />
+                <Input 
+                  id="durationMinutes" 
+                  type="number" 
+                  min="1"
+                  max="240"
+                  placeholder="30"
+                  value={durationMinutes}
+                  onChange={(e) => setDurationMinutes(parseInt(e.target.value) || 30)}
+                  className="flex-1"
+                />
+                <span className="text-sm text-muted-foreground">min</span>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                La vanne s'ouvrira pendant cette durée lors de chaque programmation
+              </p>
+            </div>
+          )}
+          
           <div className="flex items-center space-x-2">
             <Checkbox 
               id="repeat" 
@@ -940,12 +979,19 @@ const AutomaticModeScheduler: React.FC<AutomaticModeSchedulerProps> = ({ device,
             <DialogClose asChild>
               <Button 
                 onClick={() => {
-                  onSchedule({
+                  const scheduleData = {
                     startTime,
                     endTime,
-                    scheduleType: 'daily',
+                    scheduleType: 'daily' as const,
                     repeat
-                  });
+                  };
+                  
+                  // Ajouter la durée seulement pour l'irrigation
+                  if (device.type === 'irrigation') {
+                    (scheduleData as any).durationMinutes = durationMinutes;
+                  }
+                  
+                  onSchedule(scheduleData);
                 }}
               >
                 Enregistrer
