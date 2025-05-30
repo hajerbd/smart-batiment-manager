@@ -106,7 +106,7 @@ const mockRooms: Room[] = [
         status: false, // Inactif par défaut
         icon: <Thermometer className="h-5 w-5" />,
         temperature: '21°C',
-        controlMode: 'manual',
+        controlMode: 'manual', // Mode manuel par défaut
         temperatureThresholds: {
           min: 19
         }
@@ -118,7 +118,7 @@ const mockRooms: Room[] = [
         status: false, // Inactif par défaut
         icon: <Snowflake className="h-5 w-5" />,
         temperature: '21°C',
-        controlMode: 'auto',
+        controlMode: 'manual', // Mode manuel par défaut
         temperatureThresholds: {
           max: 24
         }
@@ -129,7 +129,7 @@ const mockRooms: Room[] = [
         type: 'blinds',
         status: false, // Inactif par défaut
         icon: <Blinds className="h-5 w-5" />,
-        controlMode: 'manual'
+        controlMode: 'manual' // Mode manuel par défaut
       },
       {
         id: '14',
@@ -137,7 +137,7 @@ const mockRooms: Room[] = [
         type: 'lighting',
         status: false, // Inactif par défaut
         icon: <Lamp className="h-5 w-5" />,
-        controlMode: 'manual'
+        controlMode: 'manual' // Mode manuel par défaut
       }
     ]
   },
@@ -153,7 +153,7 @@ const mockRooms: Room[] = [
         status: false, // Inactif par défaut
         icon: <Thermometer className="h-5 w-5" />,
         temperature: '19°C',
-        controlMode: 'auto',
+        controlMode: 'manual', // Mode manuel par défaut
         temperatureThresholds: {
           min: 20
         }
@@ -165,7 +165,7 @@ const mockRooms: Room[] = [
         status: false, // Inactif par défaut
         icon: <Snowflake className="h-5 w-5" />,
         temperature: '19°C',
-        controlMode: 'manual',
+        controlMode: 'manual', // Mode manuel par défaut
         temperatureThresholds: {
           max: 23
         }
@@ -176,7 +176,7 @@ const mockRooms: Room[] = [
         type: 'blinds',
         status: false, // Inactif par défaut
         icon: <Blinds className="h-5 w-5" />,
-        controlMode: 'auto'
+        controlMode: 'manual' // Mode manuel par défaut
       },
       {
         id: '24',
@@ -184,7 +184,7 @@ const mockRooms: Room[] = [
         type: 'lighting',
         status: false, // Inactif par défaut
         icon: <Lamp className="h-5 w-5" />,
-        controlMode: 'manual'
+        controlMode: 'manual' // Mode manuel par défaut
       }
     ]
   },
@@ -200,7 +200,7 @@ const mockRooms: Room[] = [
         status: false, // Inactif par défaut
         icon: <Thermometer className="h-5 w-5" />,
         temperature: '20°C',
-        controlMode: 'manual'
+        controlMode: 'manual' // Mode manuel par défaut
       },
       {
         id: '32',
@@ -209,7 +209,7 @@ const mockRooms: Room[] = [
         status: false, // Inactif par défaut
         icon: <Snowflake className="h-5 w-5" />,
         temperature: '20°C',
-        controlMode: 'auto'
+        controlMode: 'manual' // Mode manuel par défaut
       },
       {
         id: '33',
@@ -217,7 +217,7 @@ const mockRooms: Room[] = [
         type: 'blinds',
         status: false, // Inactif par défaut
         icon: <Blinds className="h-5 w-5" />,
-        controlMode: 'manual'
+        controlMode: 'manual' // Mode manuel par défaut
       },
       {
         id: '34',
@@ -225,7 +225,7 @@ const mockRooms: Room[] = [
         type: 'lighting',
         status: false, // Inactif par défaut
         icon: <Lamp className="h-5 w-5" />,
-        controlMode: 'manual'
+        controlMode: 'manual' // Mode manuel par défaut
       }
     ]
   },
@@ -240,7 +240,7 @@ const mockRooms: Room[] = [
         type: 'lighting',
         status: false, // Inactif par défaut
         icon: <Lamp className="h-5 w-5" />,
-        controlMode: 'manual'
+        controlMode: 'manual' // Mode manuel par défaut
       },
       {
         id: '42',
@@ -249,7 +249,7 @@ const mockRooms: Room[] = [
         status: false, // Inactif par défaut
         icon: <Thermometer className="h-5 w-5" />,
         temperature: '20°C',
-        controlMode: 'manual',
+        controlMode: 'manual', // Mode manuel par défaut
         temperatureThresholds: {
           min: 19
         }
@@ -261,7 +261,7 @@ const mockRooms: Room[] = [
         status: false, // Inactif par défaut
         icon: <Snowflake className="h-5 w-5" />,
         temperature: '20°C',
-        controlMode: 'auto',
+        controlMode: 'manual', // Mode manuel par défaut
         temperatureThresholds: {
           max: 24
         }
@@ -279,7 +279,7 @@ const mockRooms: Room[] = [
         type: 'irrigation',
         status: false, // Inactif par défaut
         icon: <Droplet className="h-5 w-5" />,
-        controlMode: 'auto'
+        controlMode: 'manual' // Mode manuel par défaut
       }
     ]
   }
