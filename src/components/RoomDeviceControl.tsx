@@ -423,7 +423,7 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
     }
   };
   
-  // Nouvelle fonction pour définir les seuils de température
+  // Fonction modifiée pour définir les seuils de température - active automatiquement l'appareil
   const setTemperatureThresholds = (deviceId: string, thresholds: { min?: number; max?: number }) => {
     const device = selectedRoom.devices.find(d => d.id === deviceId);
     
@@ -443,10 +443,8 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
           device.id === deviceId ? { 
             ...device, 
             temperatureThresholds: thresholds,
-            // Activer automatiquement si la température actuelle répond aux critères
-            status: device.type === 'heating' 
-              ? (parseFloat(device.temperature?.replace('°C', '') || '0') < thresholds.min!)
-              : (parseFloat(device.temperature?.replace('°C', '') || '0') > thresholds.max!)
+            // Activer automatiquement l'appareil dès qu'un seuil est défini
+            status: true
           } : device
         )
       } : room
@@ -457,13 +455,13 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
       let description = '';
       
       if (device.type === 'heating' && thresholds.min !== undefined) {
-        description = `Chauffage s'active si température < ${thresholds.min}°C`;
+        description = `Chauffage activé avec seuil à ${thresholds.min}°C`;
       } else if (device.type === 'cooling' && thresholds.max !== undefined) {
-        description = `Climatisation s'active si température > ${thresholds.max}°C`;
+        description = `Climatisation activée avec seuil à ${thresholds.max}°C`;
       }
       
       toast({
-        title: `Seuils de température définis pour ${device.name}`,
+        title: `${device.name} activé`,
         description,
       });
     }
