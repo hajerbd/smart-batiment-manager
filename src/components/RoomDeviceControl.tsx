@@ -605,7 +605,7 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
                                     <div 
                                       className="absolute w-6 h-6 bg-white dark:bg-slate-800 rounded-full shadow-md border-2 border-amber-500 flex items-center justify-center transform -translate-y-1/2"
                                       style={{ 
-                                        left: `${((device.temperatureThresholds?.min || 20) - 15) / 10 * 100}%`,
+                                        left: `${((device.temperatureThresholds?.min || 20) / 100) * 100}%`,
                                       }}
                                     >
                                       <div className="w-2 h-2 bg-amber-500 rounded-full" />
@@ -614,7 +614,7 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
                                     <div 
                                       className="absolute w-6 h-6 bg-white dark:bg-slate-800 rounded-full shadow-md border-2 border-blue-500 flex items-center justify-center transform -translate-y-1/2"
                                       style={{ 
-                                        left: `${((device.temperatureThresholds?.max || 24) - 20) / 10 * 100}%`,
+                                        left: `${((device.temperatureThresholds?.max || 24) / 100) * 100}%`,
                                       }}
                                     >
                                       <div className="w-2 h-2 bg-blue-500 rounded-full" />
@@ -623,8 +623,8 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
                                 </div>
                               </div>
                               <div className="flex justify-between text-xs mt-1">
-                                <span>{device.type === 'heating' ? '15°C' : '20°C'}</span>
-                                <span>{device.type === 'heating' ? '25°C' : '30°C'}</span>
+                                <span>0°C</span>
+                                <span>100°C</span>
                               </div>
                             </div>
 
@@ -635,8 +635,8 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
                                   "mt-2",
                                   device.type === 'heating' ? "slider-amber" : "slider-blue"
                                 )}
-                                min={device.type === 'heating' ? 15 : 20}
-                                max={device.type === 'heating' ? 25 : 30}
+                                min={0}
+                                max={100}
                                 step={0.5}
                                 value={[device.type === 'heating' 
                                   ? (device.temperatureThresholds?.min || 20) 
