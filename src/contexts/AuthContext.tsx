@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 interface AuthContextType {
   isAuthenticated: boolean;
   user: { name: string } | null;
-  login: (name: string) => boolean;
+  login: (name: string, password: string) => boolean;
   logout: () => void;
 }
 
@@ -26,9 +26,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<{ name: string } | null>(null);
 
-  const login = (name: string): boolean => {
-    // Vérifier si le nom est "Hajer Boudagga"
-    if (name.toLowerCase() === 'hajer boudagga') {
+  const login = (name: string, password: string): boolean => {
+    // Vérifier si le nom est "Hajer Boudagga" et le mot de passe est "password123"
+    if (name.toLowerCase() === 'hajer boudagga' && password === 'password123') {
       setIsAuthenticated(true);
       setUser({ name });
       return true;

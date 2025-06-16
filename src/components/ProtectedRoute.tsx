@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { User } from 'lucide-react';
+import { User, Lock } from 'lucide-react';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -21,11 +21,12 @@ interface ProtectedRouteProps {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { isAuthenticated, login } = useAuth();
   const [name, setName] = useState('');
+  const [password, setPassword] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(!isAuthenticated);
   const { toast } = useToast();
 
   const handleLogin = () => {
-    if (login(name.trim())) {
+    if (login(name.trim(), password)) {
       setIsDialogOpen(false);
       toast({
         title: "Connexion réussie",
@@ -34,7 +35,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     } else {
       toast({
         title: "Accès refusé",
-        description: "Nom d'utilisateur incorrect. Veuillez réessayer.",
+        description: "Nom d'utilisateur ou mot de passe incorrect. Veuillez réessayer.",
         variant: "destructive",
       });
     }
@@ -59,7 +60,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
             Authentification requise
           </DialogTitle>
           <DialogDescription>
-            Veuillez entrer votre nom complet pour accéder à cette page.
+            Veuillez entrer vos identifiants pour accéder à cette page.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
@@ -71,6 +72,17 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
               placeholder="Entrez votre nom complet"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              onKeyPress={handleKeyPress}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="password">Mot de passe</Label>
+            <Input
+              id="password"
+              type="password"
+              placeholder="Entrez votre mot de passe"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               onKeyPress={handleKeyPress}
             />
           </div>
