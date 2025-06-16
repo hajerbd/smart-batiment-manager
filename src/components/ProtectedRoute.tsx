@@ -53,19 +53,19 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={() => {}}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md bg-white text-gray-900 border border-gray-200">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="flex items-center gap-2 text-gray-900">
             <User className="h-5 w-5" />
             Authentification requise
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-gray-600">
             Veuillez entrer vos identifiants pour accéder à cette page.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Nom complet</Label>
+            <Label htmlFor="name" className="text-gray-700">Nom complet</Label>
             <Input
               id="name"
               type="text"
@@ -73,10 +73,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               onKeyPress={handleKeyPress}
+              className="bg-white border-gray-300 text-gray-900 placeholder-gray-500"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Mot de passe</Label>
+            <Label htmlFor="password" className="text-gray-700">Mot de passe</Label>
             <Input
               id="password"
               type="password"
@@ -84,9 +85,10 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onKeyPress={handleKeyPress}
+              className="bg-white border-gray-300 text-gray-900 placeholder-gray-500"
             />
           </div>
-          <Button onClick={handleLogin} className="w-full">
+          <Button onClick={handleLogin} className="w-full bg-blue-600 hover:bg-blue-700 text-white">
             Se connecter
           </Button>
         </div>
