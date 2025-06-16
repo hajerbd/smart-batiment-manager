@@ -140,8 +140,8 @@ const Header = () => {
           {isAuthenticated ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">
-                  <UserCircle className="h-6 w-6" />
+                <Button variant="ghost" className="rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-800/50 w-10 h-10 p-0 border-2 border-blue-200 dark:border-blue-700">
+                  <UserCircle className="h-7 w-7" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56 mt-1 bg-white dark:bg-slate-900 border dark:border-slate-800 shadow-lg">
