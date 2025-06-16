@@ -45,7 +45,7 @@ const TemperatureControl: React.FC<TemperatureControlProps> = ({ device, onTempe
           )}>
             {device.type === 'heating' 
               ? `${device.temperatureThresholds?.min || 20}°C`
-              : `${device.temperatureThresholds?.max || 24}°C`
+              : `${device.temperatureThresholds?.max || 30}°C`
             }
           </div>
         </div>
@@ -71,7 +71,7 @@ const TemperatureControl: React.FC<TemperatureControlProps> = ({ device, onTempe
                 <div 
                   className="absolute w-6 h-6 bg-white dark:bg-slate-800 rounded-full shadow-md border-2 border-blue-500 flex items-center justify-center transform -translate-y-1/2"
                   style={{ 
-                    left: `${((device.temperatureThresholds?.max || 24) / 100) * 100}%`,
+                    left: `${((device.temperatureThresholds?.max || 30) / 100) * 100}%`,
                   }}
                 >
                   <div className="w-2 h-2 bg-blue-500 rounded-full" />
@@ -96,7 +96,7 @@ const TemperatureControl: React.FC<TemperatureControlProps> = ({ device, onTempe
             step={0.5}
             value={[device.type === 'heating' 
               ? (device.temperatureThresholds?.min || 20) 
-              : (device.temperatureThresholds?.max || 24)
+              : (device.temperatureThresholds?.max || 30)
             ]}
             onValueChange={(value) => {
               if (device.type === 'heating') {
@@ -144,7 +144,7 @@ const TemperatureControl: React.FC<TemperatureControlProps> = ({ device, onTempe
           <div className="text-xs text-muted-foreground mt-0.5">
             {device.type === 'heating' 
               ? `S'active si température < ${device.temperatureThresholds?.min || 20}°C` 
-              : `S'active si température > ${device.temperatureThresholds?.max || 24}°C`
+              : `S'active si température > ${device.temperatureThresholds?.max || 30}°C`
             }
           </div>
         </div>
