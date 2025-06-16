@@ -24,23 +24,21 @@ import {
   Zap
 } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { useIsMobile } from '@/hooks/use-mobile';
-import Profile from '@/pages/Profile';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Header = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(true); // Default to authenticated for static demo
+  const { isAuthenticated, user, logout } = useAuth();
   const isMobile = useIsMobile();
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const location = useLocation();
   const [notificationCount, setNotificationCount] = useState(3);
   const navigate = useNavigate();
   const { toast } = useToast();
 
   const handleLogout = () => {
-    setIsAuthenticated(false);
+    logout();
     toast({
       title: "Déconnecté",
       description: "Vous avez été déconnecté avec succès.",
@@ -85,7 +83,7 @@ const Header = () => {
           </h1>
         </Link>
         
-        {!isMobile && (
+        {!isMobile && isAuthenticated && (
           <nav className="ml-8">
             <Tabs value={getActiveTab()}>
               <TabsList className="bg-slate-100 dark:bg-slate-800">
@@ -119,23 +117,25 @@ const Header = () => {
         )}
 
         <div className="flex items-center space-x-2">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="relative"
-            onClick={markAllAsRead}
-          >
-            <Link to="/alerts">
-              <BellRing className="h-5 w-5" />
-              {notificationCount > 0 && (
-                <Badge 
-                  className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-red-500"
-                >
-                  {notificationCount}
-                </Badge>
-              )}
-            </Link>
-          </Button>
+          {isAuthenticated && (
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="relative"
+              onClick={markAllAsRead}
+            >
+              <Link to="/alerts">
+                <BellRing className="h-5 w-5" />
+                {notificationCount > 0 && (
+                  <Badge 
+                    className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-red-500"
+                  >
+                    {notificationCount}
+                  </Badge>
+                )}
+              </Link>
+            </Button>
+          )}
 
           {isAuthenticated ? (
             <DropdownMenu>
@@ -146,8 +146,8 @@ const Header = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56 mt-1 bg-white dark:bg-slate-900 border dark:border-slate-800 shadow-lg">
                 <div className="p-2 border-b border-gray-100 dark:border-slate-800">
-                  <p className="font-medium">Jean Dupont</p>
-                  <p className="text-xs text-muted-foreground">jean.dupont@example.com</p>
+                  <p className="font-medium">{user?.name}</p>
+                  <p className="text-xs text-muted-foreground">Utilisateur connecté</p>
                 </div>
                 <DropdownMenuItem onClick={() => navigate('/settings')} className="flex items-center cursor-pointer">
                   <Settings className="mr-2 h-4 w-4" />
@@ -165,22 +165,16 @@ const Header = () => {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Dialog open={isProfileOpen} onOpenChange={setIsProfileOpen}>
-              <DialogTrigger asChild>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={() => setIsProfileOpen(true)} 
-                  className="flex items-center gap-1 border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-800/50"
-                >
-                  <LogIn className="h-4 w-4" />
-                  <span className="hidden md:inline">Connexion</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-md p-0">
-                <Profile />
-              </DialogContent>
-            </Dialog>
+            <Link to="/dashboard">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="flex items-center gap-1 border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-800/50"
+              >
+                <LogIn className="h-4 w-4" />
+                <span className="hidden md:inline">Connexion</span>
+              </Button>
+            </Link>
           )}
         </div>
       </div>
