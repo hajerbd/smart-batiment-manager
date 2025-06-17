@@ -899,7 +899,7 @@ const AutomaticModeScheduler: React.FC<AutomaticModeSchedulerProps> = ({ device,
   };
 
   return (
-    <div className="space-y-4 py-4">
+    <div className="space-y-4 py-4 light bg-white text-gray-900">
       <Form {...form}>
         <div className="space-y-4">
           <FormField
@@ -907,11 +907,11 @@ const AutomaticModeScheduler: React.FC<AutomaticModeSchedulerProps> = ({ device,
             name="scheduleType"
             render={() => (
               <FormItem>
-                <FormLabel>Type de programmation</FormLabel>
+                <FormLabel className="text-gray-900">Type de programmation</FormLabel>
                 <FormControl>
-                  <div className="flex items-center space-x-2 bg-blue-50 dark:bg-blue-900/30 p-3 rounded-md">
-                    <CalendarClock className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                    <Label className="text-blue-700 dark:text-blue-300 font-medium">
+                  <div className="flex items-center space-x-2 bg-blue-50 p-3 rounded-md">
+                    <CalendarClock className="h-5 w-5 text-blue-600" />
+                    <Label className="text-blue-700 font-medium">
                       Journalier (tous les jours)
                     </Label>
                   </div>
@@ -922,22 +922,24 @@ const AutomaticModeScheduler: React.FC<AutomaticModeSchedulerProps> = ({ device,
           
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="startTime">Heure de début</Label>
+              <Label htmlFor="startTime" className="text-gray-900">Heure de début</Label>
               <Input 
                 id="startTime" 
                 type="time" 
                 value={startTime}
                 onChange={(e) => setStartTime(e.target.value)}
+                className="bg-white border-gray-300 text-gray-900"
               />
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="endTime">Heure de fin</Label>
+              <Label htmlFor="endTime" className="text-gray-900">Heure de fin</Label>
               <Input 
                 id="endTime" 
                 type="time" 
                 value={endTime}
                 onChange={(e) => setEndTime(e.target.value)}
+                className="bg-white border-gray-300 text-gray-900"
               />
             </div>
           </div>
@@ -945,7 +947,7 @@ const AutomaticModeScheduler: React.FC<AutomaticModeSchedulerProps> = ({ device,
           {/* Champ spécifique pour la durée d'irrigation */}
           {device.type === 'irrigation' && (
             <div className="space-y-2">
-              <Label htmlFor="durationMinutes">Durée de fonctionnement (minutes)</Label>
+              <Label htmlFor="durationMinutes" className="text-gray-900">Durée de fonctionnement (minutes)</Label>
               <div className="flex items-center space-x-2">
                 <Droplet className="h-4 w-4 text-blue-500" />
                 <Input 
@@ -956,11 +958,11 @@ const AutomaticModeScheduler: React.FC<AutomaticModeSchedulerProps> = ({ device,
                   placeholder="30"
                   value={durationMinutes}
                   onChange={(e) => setDurationMinutes(parseInt(e.target.value) || 30)}
-                  className="flex-1"
+                  className="flex-1 bg-white border-gray-300 text-gray-900"
                 />
-                <span className="text-sm text-muted-foreground">min</span>
+                <span className="text-sm text-gray-600">min</span>
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-gray-600">
                 La vanne s'ouvrira pendant cette durée lors de chaque programmation
               </p>
             </div>
@@ -972,12 +974,12 @@ const AutomaticModeScheduler: React.FC<AutomaticModeSchedulerProps> = ({ device,
               checked={repeat}
               onCheckedChange={(checked) => setRepeat(checked as boolean)}
             />
-            <Label htmlFor="repeat">Activer la répétition</Label>
+            <Label htmlFor="repeat" className="text-gray-900">Activer la répétition</Label>
           </div>
           
           <div className="flex justify-end gap-2 mt-4">
             <DialogClose asChild>
-              <Button variant="outline">Annuler</Button>
+              <Button variant="outline" className="bg-white border-gray-300 text-gray-900 hover:bg-gray-50">Annuler</Button>
             </DialogClose>
             <DialogClose asChild>
               <Button 
@@ -996,6 +998,7 @@ const AutomaticModeScheduler: React.FC<AutomaticModeSchedulerProps> = ({ device,
                   
                   onSchedule(scheduleData);
                 }}
+                className="bg-blue-600 text-white hover:bg-blue-700"
               >
                 Enregistrer
               </Button>
