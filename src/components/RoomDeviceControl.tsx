@@ -782,10 +782,10 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
                                       <Clock className="h-3 w-3 mr-1" /> Modifier
                                     </Button>
                                   </DialogTrigger>
-                                  <DialogContent>
+                                  <DialogContent className="light bg-white text-gray-900 border-gray-200">
                                     <DialogHeader>
-                                      <DialogTitle>Modifier la programmation - {device.name}</DialogTitle>
-                                      <DialogDescription>
+                                      <DialogTitle className="text-gray-900">Modifier la programmation - {device.name}</DialogTitle>
+                                      <DialogDescription className="text-gray-600">
                                         Définissez le type de programmation et les horaires
                                       </DialogDescription>
                                     </DialogHeader>
@@ -809,10 +809,10 @@ const RoomDeviceControl: React.FC<RoomDeviceControlProps> = ({ roomId, onBack })
                                   <Clock className="h-4 w-4 mr-2" /> Programmer
                                 </Button>
                               </DialogTrigger>
-                              <DialogContent>
+                              <DialogContent className="light bg-white text-gray-900 border-gray-200">
                                 <DialogHeader>
-                                  <DialogTitle>Programmation - {device.name}</DialogTitle>
-                                  <DialogDescription>
+                                  <DialogTitle className="text-gray-900">Programmation - {device.name}</DialogTitle>
+                                  <DialogDescription className="text-gray-600">
                                     Définissez le type de programmation et les horaires
                                   </DialogDescription>
                                 </DialogHeader>
@@ -899,7 +899,7 @@ const AutomaticModeScheduler: React.FC<AutomaticModeSchedulerProps> = ({ device,
   };
 
   return (
-    <div className="space-y-4 py-4 light bg-white text-gray-900">
+    <div className="space-y-4 py-4">
       <Form {...form}>
         <div className="space-y-4">
           <FormField
@@ -944,7 +944,6 @@ const AutomaticModeScheduler: React.FC<AutomaticModeSchedulerProps> = ({ device,
             </div>
           </div>
           
-          {/* Champ spécifique pour la durée d'irrigation */}
           {device.type === 'irrigation' && (
             <div className="space-y-2">
               <Label htmlFor="durationMinutes" className="text-gray-900">Durée de fonctionnement (minutes)</Label>
@@ -991,7 +990,6 @@ const AutomaticModeScheduler: React.FC<AutomaticModeSchedulerProps> = ({ device,
                     repeat
                   };
                   
-                  // Ajouter la durée seulement pour l'irrigation
                   if (device.type === 'irrigation') {
                     (scheduleData as any).durationMinutes = durationMinutes;
                   }
